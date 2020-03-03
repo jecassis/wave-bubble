@@ -21,8 +21,20 @@
 #
 # make clean = Clean out built project files.
 #
+# make coff = Convert ELF to AVR COFF.
+#
+# make extcoff = Convert ELF to AVR Extended COFF.
+#
 # make program = Download the hex file to the device, using avrdude.
 #                Please customize the avrdude settings below first!
+#
+# make debug = Start either simulavr or avarice as specified for debugging, 
+#              with avr-gdb or avr-insight as the front end for debugging.
+#
+# make filename.s = Just compile filename.c into the assembler code only.
+#
+# make filename.i = Create a preprocessed source file for use in submitting
+#                   bug reports to the GCC project.
 #
 # To rebuild project do "make clean" then "make all".
 #----------------------------------------------------------------------------
@@ -68,7 +80,7 @@ OBJDIR = ./obj
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = serial.c test.c pll.c $(TARGET).c
+SRC = serial.c pll.c $(TARGET).c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)
@@ -275,14 +287,14 @@ AVRDUDE_WRITE_FLASH = -pf -if$(TARGET).hex
 
 # Uncomment the following if you do /not/ wish a verification to be
 # performed after programming the device.
-AVRDUDE_NO_VERIFY = -vf
+#AVRDUDE_NO_VERIFY = -vf
 
 # Increase verbosity level.  Please use this when submitting bug
 # reports about avrdude. See <http://savannah.nongnu.org/projects/avrdude> 
 # to submit bug reports.
 #AVRDUDE_VERBOSE = -v -v
 
-AVRDUDE_FLAGS = -dATmega168 -c$(AVRDUDE_PORT) 
+AVRDUDE_FLAGS = -d$(MCU) -c$(AVRDUDE_PORT) -I125000
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 

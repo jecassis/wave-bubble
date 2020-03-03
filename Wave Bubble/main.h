@@ -8,6 +8,8 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+#define HW_REV_B                //!< Wave Bubble 2010 hardware revision
+
 #define SPICLK_PORT     PORTC   //!< SPI CLOCK Port for digital poti
 #define SPIDO_PORT      PORTC   //!< SPI DATA Port for digital poti
 #define SPICS_PORT      PORTC   //!< SPI CHIPSELECT Port for digital poti
@@ -46,7 +48,22 @@
 #define LEDPORT         PORTD   //!< Port for LED
 #define LED             PD7     //!< Pin for LED
 
-extern volatile char in_char;
+typedef struct {
+        uint16_t startfreq1, endfreq1;
+        uint16_t dc_offset1; // values for the PWM
+        uint8_t bandwidth1;  // values for the pot
+        uint16_t startfreq2, endfreq2;
+        uint16_t dc_offset2; // values for the PWM
+        uint8_t bandwidth2;  // values for the pot
+} __attribute__((__packed__)) jammer_setting; // 12 byte
+
+#define MAX_PROGRAMS    5       /* ((E2END+1)/sizeof(jammer_setting))-1 */
+
+#define LOWBAND_VCO_LOW          345 // MHz, Low band VCO lowest frequency
+#define LOWBAND_VCO_HIGH        1350 // MHz, Low band VCO highest frequency
+
+#define HIGHBAND_VCO_LOW        1225 // MHz, Low band VCO lowest frequency
+#define HIGHBAND_VCO_HIGH       2715 // MHz, Low band VCO lowest frequency
 
 extern void set_sawtooth_low(void);
 extern void set_sawtooth_high(void);
