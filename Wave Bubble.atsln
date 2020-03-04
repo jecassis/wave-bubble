@@ -1,0 +1,22 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Atmel Studio Solution File, Format Version 11.00
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Wave Bubble", "Wave Bubble\Wave Bubble.cproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Operation|AVR = Operation|AVR
+		Test|AVR = Test|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Operation|AVR.ActiveCfg = Operation|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Operation|AVR.Build.0 = Operation|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Test|AVR.ActiveCfg = Test|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Test|AVR.Build.0 = Test|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,1 +1,6 @@
-*.hex
+/Wave Bubble/Test/
+/Wave Bubble/Operation/
+/Wave Bubble/Debug/
+/.vs/
+/.vscode/
+*.componentinfo.xml
