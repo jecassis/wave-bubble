@@ -13,7 +13,7 @@ Software Prerequisites:
 
 - Autodesk EAGLE: https://www.autodesk.com/products/eagle/overview
 - PuTTY: https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
-- Atmel Studio 7: https://www.microchip.com/mplab/avr-support/atmel-studio-7
+- Atmel Studio 7: https://www.microchip.com/mplab/avr-support/atmel-studio-7 or https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers
 - FTDI VCP Drivers: https://www.ftdichip.com/Drivers/VCP.htm
 
 Hardware and Tools Used:

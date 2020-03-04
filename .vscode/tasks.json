@@ -1,0 +1,157 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build test",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/Wave Bubble"
+            },
+            "command": "C:\\Program Files (x86)\\Atmel\\Studio\\7.0\\shellutils\\make.exe",
+            "args": [
+                "-C",
+                "${workspaceRoot}/Wave Bubble",
+                "-f",
+                "${workspaceRoot}/Wave Bubble/Makefile",
+                "CFG=Test",
+                "all"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["absolute"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "Clean test",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/Wave Bubble"
+            },
+            "command": "C:\\Program Files (x86)\\Atmel\\Studio\\7.0\\shellutils\\make.exe",
+            "args": [
+                "-C",
+                "${workspaceRoot}/Wave Bubble",
+                "-f",
+                "${workspaceRoot}/Wave Bubble/Makefile",
+                "CFG=Test",
+                "clean"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["absolute"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "Build firmware",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/Wave Bubble"
+            },
+            "command": "C:\\Program Files (x86)\\Atmel\\Studio\\7.0\\shellutils\\make.exe",
+            "args": [
+                "-C",
+                "${workspaceRoot}/Wave Bubble",
+                "-f",
+                "${workspaceRoot}/Wave Bubble/Makefile",
+                "CFG=Firmware",
+                "all"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["absolute"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "Clean firmware",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/Wave Bubble"
+            },
+            "command": "C:\\Program Files (x86)\\Atmel\\Studio\\7.0\\shellutils\\make.exe",
+            "args": [
+                "-C",
+                "${workspaceRoot}/Wave Bubble",
+                "-f",
+                "${workspaceRoot}/Wave Bubble/Makefile",
+                "CFG=Firmware",
+                "clean"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["absolute"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        }
+    ]
+}

@@ -6,7 +6,9 @@
  */
 
 #include "pll.h"
+
 #include <avr/pgmspace.h>
+
 #include "serial.h"
 #include "wavebubble.h"
 #ifdef TEST

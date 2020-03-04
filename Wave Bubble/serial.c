@@ -5,10 +5,12 @@
  *
  */
 #include "serial.h"
+
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <ctype.h>
 #include <string.h>
+
 #include "wavebubble.h"
 
 /*

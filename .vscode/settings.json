@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "**/.clang-format": "yaml",
+        "**/.prettierrc": "yaml",
+        "**/*.h": "c"
+    },
+    "git.ignoreLimitWarning": true
+}

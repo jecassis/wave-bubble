@@ -1,6 +1,13 @@
-/Wave Bubble/Test/
-/Wave Bubble/Operation/
-/Wave Bubble/Debug/
+/Wave Bubble/[Tt]est/
+/Wave Bubble/[Oo]peration/
+/Wave Bubble/[Ff]irmware/
+/Wave Bubble/[Dd]ebug/
 /.vs/
-/.vscode/
 *.componentinfo.xml
+*.hex
+*.eep
+*.elf
+*.lss
+*.map
+*.srec
+*.sym

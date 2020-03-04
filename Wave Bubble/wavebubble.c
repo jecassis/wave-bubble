@@ -24,6 +24,7 @@
  */
 
 #include "wavebubble.h"
+
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #ifndef TEST
@@ -38,7 +39,7 @@
 
 #ifdef TEST
 volatile char in_char = 0;
-#else // OPERATION
+#else // FIRMWARE
 uint16_t EEMEM dummy = 0;       // A dummy word is used at EEPROM address 0 to prevent corruption of data
 uint16_t EEMEM validity = 0;    // Validity value to check for empty EEPROM
 uint8_t EEMEM max_programs = 0; // Number of programs in EEPROM
@@ -319,7 +320,7 @@ int main(void) {
   return 0;
 }
 
-#else // OPERATION
+#else // FIRMWARE
 
 /*
  * Milliseconds delay function using 1ms system tick from timer0.
@@ -388,8 +389,8 @@ static void print_program(jammer_setting *setting, uint8_t n, uint8_t m) {
   pc_puts_P(PSTR("Program #"));
   putnum_ud(n + 1);
   pc_puts_P(PSTR(" of "));
-  putnum_ud(m);
-  pc_putc('.\n');
+  putnum_ud((uint16_t)m);
+  pc_puts_P(PSTR(".\n"));
 
   pc_puts_P(PSTR("High band VCO: "));
   if (setting->startfreq1 == 0) {
@@ -618,7 +619,7 @@ saveprog:
   eeprom_write_byte(&max_programs, progs + 1);
   pc_puts_P(PSTR("Saved program number "));
   putnum_ud(progs + 1);
-  pc_putc('.\n');
+  pc_puts_P(PSTR(".\n"));
 }
 
 /*

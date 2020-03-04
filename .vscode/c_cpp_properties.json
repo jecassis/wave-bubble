@@ -1,0 +1,52 @@
+{
+    "configurations": [
+        {
+            "name": "Test",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Program Files (x86)/Atmel/Studio/7.0/toolchain/avr8/avr8-gnu-toolchain/**"
+            ],
+            "defines": [
+                "__GNUC__=5",
+                "__GNUC_MINOR__=4",
+                "__ATmega168__",
+                "__AVR_ATmega168__",
+                "__AVR_DEV_LIB_NAME__=m168",
+                "F_CPU=8000000UL",
+                "TEST"
+            ],
+            "cStandard": "c99",
+            "cppStandard": "c++03",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": ""
+        },
+        {
+            "name": "Firmware",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Program Files (x86)/Atmel/Studio/7.0/toolchain/avr8/avr8-gnu-toolchain/**"
+            ],
+            "defines": [
+                "__GNUC__=5",
+                "__GNUC_MINOR__=4",
+                "__ATmega168__",
+                "__AVR_ATmega168__",
+                "__AVR_DEV_LIB_NAME__=m168",
+                "F_CPU=8000000UL",
+                "FIRMWARE"
+            ],
+            "cStandard": "c99",
+            "cppStandard": "c++03",
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "C:/Program Files (x86)/Atmel/Studio/7.0/toolchain/avr8/avr8-gnu-toolchain/**"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}
