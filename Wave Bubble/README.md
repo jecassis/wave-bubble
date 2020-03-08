@@ -227,22 +227,23 @@ Once text is on serial terminal use keyboard to control (note: once again no vis
 
 Notes:
 
-- R20 and R21 adjusted to match Vtune maximum of VCO. Adjusting LM-358 Max Vtune Voltage:
-  Adjust the values for R20 and R21 to correspond more adequately with the VCO Tuning Voltage Limits and the input power you get at the LM-358 (IC9).
-  The formula for the OP AMP in NonInverting Step Up Mode:  
-  Vout = Vin\*((Rf/Ri)+1)  
+- R20 and R21 adjusted to match Vtune maximum of VCO using the non-inverting step up mode formula for an operational amplifier:
+
+  Vout = Vin \* ((Rf / Ri) + 1)  
   Examples:  
   For the ROS 1200  
-  3.3V((30kohm/10kohm)+1) = 13.2V  
+  3.3V \* ((30kΩ / 10kΩ) + 1) = 13.2V  
   Corrected:  
-  3.3V((47.7/10)+1) = 19V ( max Vtune for ROS 1300 = 20V)  
-  For the ROS2700-1819+:  
-  3.3((64.9/10)+1) = 24.717V (Max Vtune for ROS 2700 is 25V)
+  3.3V \* ((47.7kΩ / 10kΩ) + 1) = 19V ( max Vtune for ROS 1300 = 20V)  
+  For the ROS2700-1819:  
+  3.3V \* ((64.9kΩ / 1kΩ) + 1) = 24.717V (Max Vtune for ROS 2700 is 25V)
+
 - JP3 and JP4 shorted between pads 1 and 2.
 - JP7 shorted between pads 2 and 3.
 - Missing R43 pads in PCB used 1206 package version: https://forums.adafruit.com/viewtopic.php?f=16&t=22158
 - Cut D1 ground pad to 5V trace short
 - Oscillator calibration (i.e. OSCCAL) is not needed in firmware, produces garbage serial output.
+- Be aware of sizing and cast appropriately when bit shifting.
 
 ## VCO Testing and Tuning References
 
