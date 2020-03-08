@@ -44,25 +44,19 @@ void pll_tx(uint32_t data, uint8_t addr) {
     } else {
       PLLDATA_PORT &= ~_BV(PLLDATA);
     }
-    /* clang-format off */
-    asm volatile ("nop");
-    asm volatile ("nop");
-    asm volatile ("nop");
-    /* clang-format on */
+    nop();
+    nop();
+    nop();
     PLLCLK_PORT |= _BV(PLLCLK);
-    /* clang-format off */
-    asm volatile ("nop");
-    asm volatile ("nop");
-    asm volatile ("nop");
-    /* clang-format on */
+    nop();
+    nop();
+    nop();
     data <<= 1;
   }
   PLLLE_PORT |= _BV(PLLLE);
-  /* clang-format off */
-  asm volatile ("nop");
-  asm volatile ("nop");
-  asm volatile ("nop");
-  /* clang-format on */
+  nop();
+  nop();
+  nop();
   PLLLE_PORT &= ~_BV(PLLLE);
   PLLDATA_PORT &= ~_BV(PLLDATA);
   PLLCLK_PORT &= ~_BV(PLLCLK);
@@ -137,7 +131,7 @@ void pll_set_freq(uint16_t rf_freq, uint8_t prescaler, uint8_t reg) {
     A = N % 16;
   }
 
-  pc_puts_P(PSTR("PLL for RF freq "));
+  pc_puts_P(PSTR("Set PLL for RF frequency "));
   putnum_ud(N);
 
   pc_puts_P(PSTR("MHz & prescaler "));
@@ -162,12 +156,10 @@ void pll_set_freq(uint16_t rf_freq, uint8_t prescaler, uint8_t reg) {
 }
 
 /*
- * Tune PLL RF stage by finding a PWM value for specific frequency.
- *  * Tune VCO1 to specific frequency using the PLL.
+ * Tune PLL RF stage (VCO1) by finding a PWM value for a specific frequency.
  *
  * freq: Frequency to tune
- * @return  OCR1 PWM value for given frequency
- * @return  Tuning midpoint value, 0 if tuning failed
+ * Returns OCR1 PWM value (tuning midpoint) for given frequency or 0 if tuning failed
  *
  */
 uint8_t tune_rf(uint16_t freq) {
@@ -185,13 +177,11 @@ uint8_t tune_rf(uint16_t freq) {
 #endif
   delay_ms(500);
 
-  // Cannot tune any lower...???
-  if (PLL_RFIN_PIN & _BV(PLL_RFIN)) {
-    pc_puts_P(PSTR("RF VCO range is too high!\n"));
+  if (PLL_RFIN_PIN & _BV(PLL_RFIN)) { // Cannot tune any lower...???
+    pc_puts_P(PSTR("RF VCO range is too high!\n\n"));
     return 0;
   }
 
-  pc_putc('\n');
 #ifdef TEST
   OCR1A = 255;
 #else
@@ -199,13 +189,12 @@ uint8_t tune_rf(uint16_t freq) {
 #endif
   delay_ms(500);
 
-  // Cannot tune any higher...???
-  if (!(PLL_RFIN_PIN & _BV(PLL_RFIN))) {
-    pc_puts_P(PSTR("RF VCO range is too low!\n"));
+  if (!(PLL_RFIN_PIN & _BV(PLL_RFIN))) { // Cannot tune any higher...???
+    pc_puts_P(PSTR("RF VCO range is too low!\n\n"));
     return 0;
   }
 
-  pc_puts_P(PSTR("midpoint @ "));
+  pc_puts_P(PSTR("Midpoint at "));
   low = 0;
 #ifdef TEST
   high = 255;
@@ -213,14 +202,14 @@ uint8_t tune_rf(uint16_t freq) {
   high = 4095;
 #endif
   while ((low + 2) <= high) {
-    //putnum_ud(low);
-    //uart_putchar('/');
-    //putnum_ud(high);
-    //uart_putchar('\t');
+    // putnum_ud(low);
+    // uart_putchar('/');
+    // putnum_ud(high);
+    // uart_putchar('\t');
     i = ((uint16_t)low + (uint16_t)high) / 2;
     OCR1A = i;
-    //putnum_ud(OCR1A);
-    //pc_puts(", ");
+    // putnum_ud(OCR1A);
+    // pc_puts(", ");
     delay_ms(500);
     if (PLL_RFIN_PIN & _BV(PLL_RFIN)) {
       delay_ms(1);
@@ -238,13 +227,10 @@ uint8_t tune_rf(uint16_t freq) {
 }
 
 /*
- * Tune PLL IF stage by finding a PWM value for specific frequency.
- * Tune VCO2 to specific frequency using the PLL.
+ * Tune PLL IF stage (VCO2) by finding a PWM value for a specific frequency.
  *
  * freq: Frequency to tune
- * Returns OCR1 PWM value for given frequency
- * 
- * Returns tuning midpoint value or 0 if tuning failed
+ * Returns OCR1 PWM value (tuning midpoint) for given frequency or 0 if tuning failed
  *
  */
 uint8_t tune_if(uint16_t freq) {
@@ -253,7 +239,7 @@ uint8_t tune_if(uint16_t freq) {
   pll_set_if(freq, 8);
 
   set_resistor(BANDWADJ2_RES, 0);
-  POWERCTL2_PORT |= _BV(POWERCTL2); // turn on VCO
+  POWERCTL2_PORT |= _BV(POWERCTL2); // Turn on VCO
 
 #ifdef TEST
   OCR1B = 5;
@@ -262,12 +248,11 @@ uint8_t tune_if(uint16_t freq) {
 #endif
   delay_ms(500);
 
-  if (PLL_IFIN_PIN & _BV(PLL_IFIN)) { // cannot tune any lower...???
-    pc_puts_P(PSTR("IF VCO range is too high!\n"));
+  if (PLL_IFIN_PIN & _BV(PLL_IFIN)) { // Cannot tune any lower...???
+    pc_puts_P(PSTR("IF VCO range is too high!\n\n"));
     return 0;
   }
 
-  pc_putc('\n');
 #ifdef TEST
   OCR1B = 255;
 #else
@@ -275,12 +260,12 @@ uint8_t tune_if(uint16_t freq) {
 #endif
   delay_ms(500);
 
-  if (!(PLL_IFIN_PIN & _BV(PLL_IFIN))) { // cannot tune any higher...???
-    pc_puts_P(PSTR("IF VCO range is too low!\n"));
+  if (!(PLL_IFIN_PIN & _BV(PLL_IFIN))) { // Cannot tune any higher...???
+    pc_puts_P(PSTR("IF VCO range is too low!\n\n"));
     return 0;
   }
 
-  pc_puts_P(PSTR("midpoint @ "));
+  pc_puts_P(PSTR("Midpoint at "));
   low = 0;
 #ifdef TEST
   high = 255;
@@ -290,8 +275,8 @@ uint8_t tune_if(uint16_t freq) {
   while ((low + 2) <= high) {
     i = ((uint16_t)low + (uint16_t)high) / 2;
     OCR1B = i;
-    //putnum_ud(OCR1B);
-    //pc_puts(", ");
+    // putnum_ud(OCR1B);
+    // pc_puts(", ");
     delay_ms(500);
     if (PLL_IFIN_PIN & _BV(PLL_IFIN)) {
       delay_ms(1);
@@ -348,7 +333,7 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     return 0;
   }
 
-  pc_puts_P(PSTR("\nBandwidth tuning..."));
+  pc_puts_P(PSTR("\nBandwidth tuning...\n"));
 
   if (vco_num == 0) {
     pll_set_rf(min, 8);
@@ -372,14 +357,14 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     ADCSRA |= _BV(ADSC);
     while (ADCSRA & _BV(ADSC)) {} // wait for conversion to finish
     avg += ADC;
-    //putnum_ud(t);
-    //pc_putc(' ');
+    // putnum_ud(t);
+    // pc_putc(' ');
   }
   avg /= 128;
   threshhold = avg;
-  //pc_puts("thres = ");
-  //putnum_ud(threshhold);
-  //pc_putc('\n');
+  // pc_puts("thres = ");
+  // putnum_ud(threshhold);
+  // pc_putc('\n');
 
   low = 0;
   high = 255;
@@ -391,8 +376,8 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     } else {
       set_resistor(BANDWADJ2_RES, i);
     }
-    //putnum_ud(i);
-    //pc_puts(", ");
+    // putnum_ud(i);
+    // pc_puts(", ");
     delay_ms(500);
 
     // Read ADC
@@ -406,20 +391,21 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
       ADCSRA |= _BV(ADSC);
       while (ADCSRA & _BV(ADSC)) {} // Wait for conversion to finish
       avg += ADC;
-      //putnum_ud(t);
-      //uart_putchar(' ');
+      // putnum_ud(t);
+      // uart_putchar(' ');
     }
     avg /= 128;
-    //putnum_ud(avg);
-    //pc_putc('\n');
+    // putnum_ud(avg);
+    // pc_putc('\n');
     if (avg < (threshhold - 10)) {
       high = i;
     } else {
       low = i;
     }
   }
+  pc_puts_P(PSTR("Done! Potentiometer: "));
   putnum_ud(i);
-  pc_puts_P(PSTR(" done!\n"));
+  pc_puts_P(PSTR("\n\n"));
   set_sawtooth_high();
 
   return i;

@@ -12,15 +12,15 @@
 
 #define HW_REV_B // Wave Bubble 2010 hardware revision
 
-#define SPICLK_PORT PORTC // SPI CLOCK Port for digital pot
-#define SPIDO_PORT PORTC  // SPI DATA Port for digital pot
-#define SPICS_PORT PORTC  // SPI CHIPSELECT Port for digital pot
-#define SPICLK_DDR DDRC   // SPI CLOCK Direction for digital pot
-#define SPIDO_DDR DDRC    // SPI DATA Direction for digital pot
-#define SPICS_DDR DDRC    // SPI CHIPSELECT Direction for digital pot
-#define SPICLK 1          // SPI CLOCK Pin for digital pot
-#define SPIDO 2           // SPI DATA Pin for digital pot
-#define SPICS 3           // SPI CHIPSELECT Pin for digital pot
+#define SPICLK_PORT PORTC // SPI CLOCK Port for digital potentiometer
+#define SPIDO_PORT PORTC  // SPI DATA Port for digital potentiometer
+#define SPICS_PORT PORTC  // SPI CHIPSELECT Port for digital potentiometer
+#define SPICLK_DDR DDRC   // SPI CLOCK Direction for digital potentiometer
+#define SPIDO_DDR DDRC    // SPI DATA Direction for digital potentiometer
+#define SPICS_DDR DDRC    // SPI CHIPSELECT Direction for digital potentiometer
+#define SPICLK 1          // SPI CLOCK Pin for digital potentiometer
+#define SPIDO 2           // SPI DATA Pin for digital potentiometer
+#define SPICS 3           // SPI CHIPSELECT Pin for digital potentiometer
 
 #define BANDWADJ1_RES 1 // Digital potentiometer for VCO1
 #define BANDWADJ2_RES 0 // Digital potentiometer for VCO2
@@ -52,8 +52,8 @@
 
 #ifdef TEST
 extern volatile char in_char;
-#else // FIRMWARE
-// 12-byte structure holding jammer program settings in EEPROM
+#else // PRODUCTION
+// 14-byte structure holding jammer program settings in EEPROM
 typedef struct {
   uint16_t startfreq1, endfreq1; // Start and end frequencies in MHz
   uint16_t dc_offset1;           // Values for the PWM
@@ -63,7 +63,7 @@ typedef struct {
   uint8_t bandwidth2;            // Values for the potentiometer
 } __attribute__((__packed__)) jammer_setting;
 
-#define MAX_PROGRAMS 5 // ((E2END+1)/sizeof(jammer_setting))-1
+#define MAX_PROGRAMS 5 // ((E2END+1)/sizeof(jammer_setting))-1=((0x1FF+0x1)/0xE)-0x1=0x23=35
 
 #define LOWBAND_VCO_LOW 345   // Low band VCO lowest frequency in MHz
 #define LOWBAND_VCO_HIGH 1350 // Low band VCO highest frequency in MHz
@@ -78,5 +78,9 @@ extern void init_pwm(void);
 extern void set_sawtooth_low(void);
 extern void set_sawtooth_high(void);
 extern void set_resistor(uint8_t rnum, uint8_t rval);
+
+/* clang-format off */
+#define nop() asm volatile ("nop")
+/* clang-format on */
 
 #endif

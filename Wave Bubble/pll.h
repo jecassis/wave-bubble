@@ -33,13 +33,12 @@
 
 extern void pll_tx(uint32_t data, uint8_t addr);
 extern void pll_init(void);
-extern void pll_set_rcounter(uint16_t rcounter);
 extern void pll_set_freq(uint16_t rf_freq, uint8_t prescaler, uint8_t reg);
 extern uint8_t tune_rf(uint16_t freq);
 extern uint8_t tune_if(uint16_t freq);
 extern uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num);
 
-#define pll_set_rf(x, n) pll_set_freq(x, n, 0x1);
-#define pll_set_if(x, n) pll_set_freq(x, n, 0x4);
+#define pll_set_rf(x, n) pll_set_freq(x, n, 0x1)
+#define pll_set_if(x, n) pll_set_freq(x, n, 0x4)
 
 #endif

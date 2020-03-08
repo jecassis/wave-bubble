@@ -55,8 +55,7 @@ ISR(USART_RX_vect) {
  */
 void pc_putc(char data) {
   // Wait for USART to become available
-  while ((UCSR0A & _BV(UDRE0)) != _BV(UDRE0)) {}
-  //loop_until_bit_is_set(UCSR0A, UDRE0);
+  loop_until_bit_is_set(UCSR0A, UDRE0);
 
   UDR0 = data; // Send character
 }
@@ -94,8 +93,7 @@ void pc_puts_P(const char *s) {
 */
 char pc_getc(void) {
   //  Wait for USART receive complete flag
-  while ((UCSR0A & _BV(RXC0)) != _BV(RXC0)) {}
-  //loop_until_bit_is_set(UCSR0A, RXC0);
+  loop_until_bit_is_set(UCSR0A, RXC0);
 
   return UDR0;
 }
@@ -114,7 +112,6 @@ void putnum_ud(uint16_t n) {
     ++cnt;
     n -= 10000UL;
   }
-
   if (flag) {
     pc_putc('0' + cnt);
   }
