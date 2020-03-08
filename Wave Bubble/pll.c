@@ -16,50 +16,64 @@
 #endif
 
 /*
- * Send data word to a specific PLL address.
+ * Send data to a specific PLL address.
  *
- * data: Data word to send
+ * Notes:
+ * 1. DATA is clocked into the 24-bit shift register on the rising edge of CLK
+ * 2. The shift register consists of a 21-bit DATA field and a 3-bit ADDRESS field
+ * 3. The MSB of DATA is shifted in first followed
+ *
+ * data: Data to send
  * addr: PLL register address
  *
  */
 void pll_tx(uint32_t data, uint8_t addr) {
-  uint8_t i;
+  uint32_t reg_mask;
 
-  if (addr > 5) {
+#ifdef DEBUG
+  if (addr > LMX2433_R5_IF_TOC_ADDRESS) {
+    pc_puts_P(PSTR("Register does not exist."));
     return;
   }
+#endif
 
-  data <<= 3;
-  data |= (addr & 0x7);
-  data <<= 8;
+  data = (data | (addr & LMX2433_ADDRESS_MASK)) & LMX2433_REG_MASK;
 
+  // Bring LE low (clock in data while LE is low)
   PLLLE_PORT &= ~_BV(PLLLE);
-  PLLDATA_PORT &= ~_BV(PLLDATA);
+
+  // Start out with the CLK low
   PLLCLK_PORT &= ~_BV(PLLCLK);
 
-  for (i = 0; i < 24; ++i) {
-    PLLCLK_PORT &= ~_BV(PLLCLK);
-    if (data & 0x80000000) {
+  for (reg_mask = LMX2433_MSB_MASK; reg_mask != 0; reg_mask >>= 1) {
+    // Set DATA high or low depending on masked value
+    if (data & reg_mask) {
       PLLDATA_PORT |= _BV(PLLDATA);
     } else {
       PLLDATA_PORT &= ~_BV(PLLDATA);
     }
     nop();
-    nop();
-    nop();
+
+    // t_CS: DATA to CLK Setup Time -- 50ns minimum
+    // Set CLK high to latch the DATA bit
     PLLCLK_PORT |= _BV(PLLCLK);
     nop();
-    nop();
-    nop();
-    data <<= 1;
+
+    // t_CWH: CLK Pulse Width High -- 50ns minimum
+    // t_CH: DATA to CLK Hold Time -- 10ns minimum
+    // Set CLK low to clock in the next DATA bit
+    PLLCLK_PORT &= ~_BV(PLLCLK);
+
+    // t_CWL: CLK Pulse Width Low -- 50ns minimum
+    // t_ES: CLK to LE Setup Time -- 50ns minimum
   }
+
+  // Pull LE line high to latch DATA into the register
+  // t_EW: LE Pulse Width -- 50ns minimum
   PLLLE_PORT |= _BV(PLLLE);
-  nop();
-  nop();
   nop();
   PLLLE_PORT &= ~_BV(PLLLE);
   PLLDATA_PORT &= ~_BV(PLLDATA);
-  PLLCLK_PORT &= ~_BV(PLLCLK);
 }
 
 /*
@@ -68,6 +82,8 @@ void pll_tx(uint32_t data, uint8_t addr) {
  */
 void pll_init(void) {
   uint32_t out;
+  uint16_t R = 10 & LMX2433_R0_R3_R_MASK; // 1MHz reference clock
+  uint32_t disable = 0;
 
   ADCSRA = _BV(ADSC) | _BV(ADEN) | _BV(ADPS1) | _BV(ADPS2);
 
@@ -79,79 +95,70 @@ void pll_init(void) {
   PLL_IFIN_PORT &= ~_BV(PLL_IFIN);
   PLL_RFIN_PORT &= ~_BV(PLL_RFIN);
 
-  pll_tx(0x0, 0x2); // Do not use general purpose pins, no fastlock
-  pll_tx(0x0, 0x5); // Do not use general purpose pins, no fastlock
+  pll_tx(disable, LMX2433_R2_RF_TOC_ADDRESS); // Disable RF Synthesizer Time Out Counter (TOC), fastlock, and set FLoutRF pin to general purpose and high impedance
+  pll_tx(disable, LMX2433_R5_IF_TOC_ADDRESS); // Disable IF Synthesizer Time Out Counter (TOC), fastlock, and set OSCout/FLoutIF pin to general purpose and high impedance
 
-  // Setup 1MHz reference clock
-  out = 3;
-  out <<= 19;
-  out |= (10 & 0x7FFF);
-  pll_tx(out, 0x3); // No other bits set: defaults
-  out = 3;
-  out <<= 19;
-  out |= (10 & 0x7FFF);
-  pll_tx(out, 0x0); // No other bits set: defaults
-}
-
-/*
- * Set PLL reference counter.
- *
- * rcounter: Reference counter value
- *
- */
-void pll_set_rcounter(uint16_t rcounter) {
-  pll_tx((rcounter & 0x7FFF), 0x0); // No other bits set: defaults
-  pll_tx((rcounter & 0x7FFF), 0x3); // No other bits set: defaults
+  out = (LMX2433_R3_MUX_BITS(LMX2433_MUX_RF_N_DIV_BY_2) << LMX2433_R0_R3_MUX_BIT_SHIFT) | (R << LMX2433_R0_R3_R_BIT_SHIFT);
+  pll_tx(out, LMX2433_R3_IF_R_ADDRESS);
+  out = (LMX2433_R0_MUX_BITS(LMX2433_MUX_RF_N_DIV_BY_2) << LMX2433_R0_R3_MUX_BIT_SHIFT) | (R << LMX2433_R0_R3_R_BIT_SHIFT);
+  pll_tx(out, LMX2433_R0_RF_R_ADDRESS);
 }
 
 /*
  * Set PLL frequency and prescaler.
  *
  * rf_freq:   RF frequency to set
- * prescaler: PLL prescaler
+ * P:         PLL prescaler
  * reg:       PLL stage to use, RF or IF
  *
  */
-void pll_set_freq(uint16_t rf_freq, uint8_t prescaler, uint8_t reg) {
-  uint16_t N;
-  uint16_t B, A;
+void pll_set_freq(uint16_t rf_freq, uint8_t P, uint8_t reg) {
+  uint8_t prescaler;
+  uint16_t B_mask, B, A, N;
   uint32_t out = 0;
 
-  if ((prescaler != 8) && (prescaler != 16))
-    prescaler = 8;
-
-  // Fin = N*fcomp
-  N = rf_freq; // fcomp = 1MHz
-  // N = (P*B)+A
-  if (prescaler == 8) {
-    B = N / 8;
-    A = N % 8;
-  } else {
-    B = N / 16;
-    A = N % 16;
+#ifdef DEBUG
+  if (((reg != LMX2433_R1_RF_N_ADDRESS) && (reg != LMX2433_R4_IF_N_ADDRESS)) ||
+      ((P != LMX2433_PRESCALER_8_9) && (P != LMX2433_PRESCALER_16_17))) {
+    pc_puts_P(PSTR("Can only write to R1 (RF) and R4 (IF) and use 8/9 and 16/17 as prescalers."));
+    return;
   }
+#endif
+
+  // fCOMP: RF or IF phase detector comparison frequency (1MHz)
+  // Fin: RF or IF input frequency (Fin = N * fCOMP)
+  // A: RF_A or IF_A counter value
+  // B: RF_B or IF_B counter value
+  // P: Preset modulus of the dual modulus prescaler (P = 8 or 16)
+  // N = Feedback divider frequency, therefore:
+  // RF: RF_N = (RF_B * RF_P) + RF_A
+  // IF: IF_N = (IF_B * IF_P) + IF_A
+  N = rf_freq; // fcomp = 1MHz
+  B = N / P;
+  // Divide ratios less than 3 are prohibited
+  if (B < 3) {
+    B = 3;
+  }
+  A = N % P;
 
   pc_puts_P(PSTR("Set PLL for RF frequency "));
   putnum_ud(N);
-
   pc_puts_P(PSTR("MHz & prescaler "));
-  putnum_ud(prescaler);
-
+  putnum_ud(P);
   pc_puts_P(PSTR(": B="));
   putnum_ud(B);
-
   pc_puts_P(PSTR(" A="));
   putnum_ud(A);
-
   pc_putc('\n');
 
-  if (prescaler == 16) {
-    out = 1; // 16 prescaler
-  }
-  out <<= 15;
-  out |= B;
-  out <<= 4;
-  out |= A & 0xF;
+  // The R1/R4 registers contains the RF_A/IF_A, RF_B/IF_B, RF_P/IF_P, and RF_PD/IF_PD control words;
+  // the RF_A/IF_A and RF_B/IF_B control words are used to set up the programmable feedback divider
+  prescaler = (P == LMX2433_PRESCALER_16_17) ? LMX2433_R1_R4_SYNTH_PRESCALE_SELECT_16_17 : LMX2433_R1_R4_SYNTH_PRESCALE_SELECT_8_9;
+  B_mask = (reg == LMX2433_R1_RF_N_ADDRESS) ? LMX2433_R1_B_MASK : LMX2433_R4_B_MASK;
+  out = ((uint32_t)(A & LMX2433_R1_R4_A_MASK) << LMX2433_R1_R4_A_BIT_SHIFT) |
+        ((uint32_t)(B & B_mask) << LMX2433_R1_R4_B_BIT_SHIFT) |
+        ((uint32_t)prescaler << LMX2433_R1_R4_SYNTH_PRESCALE_BIT_SHIFT) |
+        (LMX2433_R1_R4_SYNTH_PD_PLL_ACTIVE << LMX2433_R1_R4_SYNTH_PD_BIT_SHIFT);
   pll_tx(out, reg);
 }
 
@@ -419,7 +426,7 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
       low = i;
     }
   }
-  pc_puts_P(PSTR("Done! Potentiometer: "));
+  pc_puts_P(PSTR("Done! Variable resistor: "));
   putnum_ud(i);
   pc_puts_P(PSTR("\n\n"));
   set_sawtooth_high();

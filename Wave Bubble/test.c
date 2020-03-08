@@ -120,23 +120,27 @@ void test_vcos(void) {
 }
 
 /*
- * Test PLL by oscillating the DATA pin (pin #10) at 5 Hz.
+ * Test PLL by oscillating the Ftest/LD pin (pin 10) at 5Hz (1/200ms).
  *
  */
 void test_pll1(void) {
   uint32_t out;
+  uint16_t R = 10 & LMX2433_R0_R3_R_MASK; // 1MHz reference clock
 
-  out = 2;
-  out <<= 19;
-  out |= (10 & 0x7FFF);
-  pll_tx(out, 0x3); // No other bits set: defaults
-  delay_ms(100);
+  out = (LMX2433_R0_MUX_BITS(LMX2433_MUX_RF_PLL_DIGITAL_LOCK_DETECT) << LMX2433_R0_R3_MUX_BIT_SHIFT) | (R << LMX2433_R0_R3_R_BIT_SHIFT);
+  pll_tx(out, LMX2433_R0_RF_R_ADDRESS);
 
-  out = 1;
-  out <<= 19;
-  out |= (10 & 0x7FFF);
-  pll_tx(out, 0x3); // No other bits set: defaults
-  delay_ms(100);
+  in_char = 0;
+
+  while (in_char == 0) {
+    out = (LMX2433_R3_MUX_BITS(LMX2433_MUX_IF_PLL_ANALOG_LOCK_DETECT) << LMX2433_R0_R3_MUX_BIT_SHIFT) | (R << LMX2433_R0_R3_R_BIT_SHIFT);
+    pll_tx(out, LMX2433_R3_IF_R_ADDRESS);
+    delay_ms(100);
+
+    out = (LMX2433_R3_MUX_BITS(LMX2433_MUX_RF_PLL_DIGITAL_LOCK_DETECT) << LMX2433_R0_R3_MUX_BIT_SHIFT) | (R << LMX2433_R0_R3_R_BIT_SHIFT);
+    pll_tx(out, LMX2433_R3_IF_R_ADDRESS);
+    delay_ms(100);
+  }
 }
 
 /*

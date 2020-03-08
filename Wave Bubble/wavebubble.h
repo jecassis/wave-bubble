@@ -12,43 +12,55 @@
 
 #define HW_REV_B // Wave Bubble 2010 hardware revision
 
-#define SPICLK_PORT PORTC // SPI CLOCK Port for digital potentiometer
-#define SPIDO_PORT PORTC  // SPI DATA Port for digital potentiometer
-#define SPICS_PORT PORTC  // SPI CHIPSELECT Port for digital potentiometer
-#define SPICLK_DDR DDRC   // SPI CLOCK Direction for digital potentiometer
-#define SPIDO_DDR DDRC    // SPI DATA Direction for digital potentiometer
-#define SPICS_DDR DDRC    // SPI CHIPSELECT Direction for digital potentiometer
-#define SPICLK 1          // SPI CLOCK Pin for digital potentiometer
-#define SPIDO 2           // SPI DATA Pin for digital potentiometer
-#define SPICS 3           // SPI CHIPSELECT Pin for digital potentiometer
+#define SPICLK_DDR DDRC   // SPI CLOCK direction for digitally-controlled variable resistor
+#define SPICLK_PORT PORTC // SPI CLOCK port for digitally-controlled variable resistor
+#define SPICLK PC1        // SPI CLOCK pin for digital digitally-controlled variable resistor
 
-#define BANDWADJ1_RES 1 // Digital potentiometer for VCO1
-#define BANDWADJ2_RES 0 // Digital potentiometer for VCO2
+#define SPISDO_DDR DDRC   // SPI SDO direction for digitally-controlled variable resistor
+#define SPISDO_PORT PORTC // SPI SDO port for digitally-controlled variable resistor
+#define SPISDO PC2        // SPI SDO pin for digitally-controlled variable resistor
+
+#define SPICS_DDR DDRC   // SPI CS direction for digitally-controlled variable resistor
+#define SPICS_PORT PORTC // SPI CS port for digitally-controlled variable resistor
+#define SPICS PC3        // SPI CS pin for digitally-controlled variable resistor
 
 #define FREQSET_DDR DDRC   // Digital frequency set direction
 #define FREQSET_PORT PORTC // Digital frequency set port
 #define FREQSET PC4        // Digital frequency set pin
 
-#define POWERON_PORT PORTB // Power ON switch port
-#define POWERON PB6        // Power ON switch pin
-#define POWERON_DDR DDRB   // Power ON direction
+#define POWERON_DDR DDRB   // Power on direction
+#define POWERON_PORT PORTB // Power on switch port
+#define POWERON PB6        // Power on switch pin
 
-#define PROGKEY_PORT PORTB // Program key port
 #define PROGKEY_PIN PINB   // Program key input
-#define PROGKEY PB4        // Program key pin
 #define PROGKEY_DDR DDRB   // Program key direction
+#define PROGKEY_PORT PORTB // Program key port
+#define PROGKEY PB4        // Program key pin
 
-#define POWERCTL1_PORT PORTB // Power control port VCO1
-#define POWERCTL1 PB7        // Power control pin VCO1
-#define POWERCTL1_DDR DDRB   // Power control direction VCO1
+#define POWERCTL1_DDR DDRB   // Power control direction for VCO1
+#define POWERCTL1_PORT PORTB // Power control port for VCO1
+#define POWERCTL1 PB7        // Power control pin for VCO1
 
-#define POWERCTL2_PORT PORTD // Power control port VCO2
-#define POWERCTL2 PD3        // Power control pin VCO2
-#define POWERCTL2_DDR DDRD   // Power control direction VCO2
+#define POWERCTL2_DDR DDRD   // Power control direction for VCO2
+#define POWERCTL2_PORT PORTD // Power control port for VCO2
+#define POWERCTL2 PD3        // Power control pin for VCO2
 
 #define LEDDDR DDRD   // Direction for LED
 #define LEDPORT PORTD // Port for LED
 #define LED PD7       // Pin for LED
+
+#define AD8402_REG_MASK 0x03FF
+#define AD8402_SHIFT_REGISTER_SIZE 10
+#define AD8402_MSB_MASK (1 << (AD8402_SHIFT_REGISTER_SIZE - 1))
+#define AD8402_ADDRESS_BIT_SHIFT 8
+#define AD8402_NUMBER_ADDRESS_BITS 2
+#define AD8402_ADDRESS_SIZE_MASK 0x3
+
+#define AD8402_RDAC1_ADDRESS 0x0
+#define AD8402_RDAC2_ADDRESS 0x1
+
+#define BANDWADJ1_RES AD8402_RDAC2_ADDRESS // Digital potentiometer for VCO1
+#define BANDWADJ2_RES AD8402_RDAC1_ADDRESS // Digital potentiometer for VCO2
 
 #ifdef TEST
 extern volatile char in_char;

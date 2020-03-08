@@ -107,47 +107,64 @@ void set_sawtooth_low(void) {
 }
 
 /*
- * Set digital potentiometer.
+ * Set digital variable resistor.
+ *
+ * Notes:
+ * 1. DATA is clocked into the 10-bit shift register on the rising edge of CLK
+ * 2. The shift register consists of a 2-bit ADDRESS field and a 8-bit DATA field
+ * 3. The MSB of 2-bit ADDRESS is shifted in first
  *
  * rnum: Number of potentiometer, 0 or 1
- * rval: Resistor value to set
+ * rval: Resistor value to set, 0-255
  *
  */
+/* Control Register R0/R3 bits */
 void set_resistor(uint8_t rnum, uint8_t rval) {
-  uint16_t d;
+  uint16_t reg_mask, data;
 
-  d = rnum;
-  d <<= 8;
-  d |= rval;
+  data = rnum & AD8402_ADDRESS_SIZE_MASK;
+#ifdef DEBUG
+  if (data != AD8402_RDAC1_ADDRESS || data != AD8402_RDAC2_ADDRESS) {
+    pc_puts_P(PSTR("Only 2 variable resistors on AD8402."));
+    return;
+  }
+#endif
+  data <<= AD8402_ADDRESS_BIT_SHIFT;
+  data = (data | rval) & AD8402_REG_MASK;
 
+  // CS low
+  // t_CSS: CS Setup Time -- 10ns minimum
   SPICS_PORT &= ~_BV(SPICS);
   nop();
-  nop();
-  nop();
-  nop();
-  /* clang-format on */
 
-  for (rnum = 0; rnum < 10; ++rnum) {
-    if (d & 0x200) {
-      SPIDO_PORT |= _BV(SPIDO);
+  for (reg_mask = AD8402_MSB_MASK; reg_mask != 0; reg_mask >>= 1) {
+    // Set DATA high or low depending on masked value
+    if (data & reg_mask) {
+      SPISDO_PORT |= _BV(SPISDO);
     } else {
-      SPIDO_PORT &= ~_BV(SPIDO);
+      SPISDO_PORT &= ~_BV(SPISDO);
     }
+
+    // t_DS: DATA Setup Time -- 5ns minimum
+    // Set CLK high to latch the DATA bit
     SPICLK_PORT |= _BV(SPICLK);
-    nop();
-    nop();
-    nop();
-    nop();
-    nop();
+
+    // t_CH: Input Clock Pulse Width -- 10ns minimum
+    // t_DH: Data Hold Time -- 5ns minimum
+    // Set CLK low to clock in the next DATA bit
     nop();
     SPICLK_PORT &= ~_BV(SPICLK);
-    d <<= 1;
+
+    // t_CL: CLK Pulse Width Low -- 10ns minimum
   }
-  nop();
-  nop();
-  nop();
+
+  // t_CSH: CLK Fall to CS Rise Hold Time -- 0ns minimum
+  // t_CS1: CS Rise to CLK Rise Setup -- 10ns minimum
+  // Pull CS line high to load the DAC register
   nop();
   SPICS_PORT |= _BV(SPICS);
+
+  // t_CSW: CS High Pulse Width -- 10ns minimum
 }
 
 #ifdef TEST
@@ -170,9 +187,9 @@ int main(void) {
   LEDDDR |= _BV(LED);
   LEDPORT &= ~_BV(LED);
 
-  // Setup port and pins for software SPI operation to control digital potentiometer
+  // Setup port and pins for SPI to digitally-controlled variable resistor
   SPICS_DDR |= _BV(SPICS);
-  SPIDO_DDR |= _BV(SPIDO);
+  SPISDO_DDR |= _BV(SPISDO);
   SPICLK_DDR |= _BV(SPICLK);
 
   SPICS_PORT |= _BV(SPICS);
@@ -341,7 +358,7 @@ void delay_ms(uint16_t ms) {
  *
  */
 static void init_eeprom(void) {
-  uint16_t temp;
+  uint16_t i, temp;
   uint8_t *p = 0;
 
   // Read validity word
@@ -349,7 +366,7 @@ static void init_eeprom(void) {
 
   // Check validity, 0xBEEF is good here.
   if (temp != 0xEFBE) { // Not correct? Init EEPROM.
-    for (uint16_t i = 0; i < E2END + 1; ++i) {
+    for (i = 0; i < E2END + 1; ++i) {
       eeprom_write_byte(p++, 0x00);
     }
   }
@@ -727,7 +744,7 @@ int main(void) {
 
   // Setup port and pins for software SPI operation to control digital potentiometer
   SPICS_DDR |= _BV(SPICS);
-  SPIDO_DDR |= _BV(SPIDO);
+  SPISDO_DDR |= _BV(SPISDO);
   SPICLK_DDR |= _BV(SPICLK);
 
   SPICS_PORT |= _BV(SPICS);
