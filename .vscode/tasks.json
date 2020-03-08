@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build test",
+            "label": "Build test firmware",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceRoot}/Wave Bubble"
@@ -40,7 +40,7 @@
             }
         },
         {
-            "label": "Clean test",
+            "label": "Clean test firmware",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceRoot}/Wave Bubble"
@@ -78,7 +78,7 @@
             }
         },
         {
-            "label": "Build firmware",
+            "label": "Build production firmware",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceRoot}/Wave Bubble"
@@ -89,7 +89,7 @@
                 "${workspaceRoot}/Wave Bubble",
                 "-f",
                 "${workspaceRoot}/Wave Bubble/Makefile",
-                "CFG=Firmware",
+                "CFG=Production",
                 "all"
             ],
             "group": {
@@ -116,7 +116,7 @@
             }
         },
         {
-            "label": "Clean firmware",
+            "label": "Clean production firmware",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceRoot}/Wave Bubble"
@@ -127,7 +127,7 @@
                 "${workspaceRoot}/Wave Bubble",
                 "-f",
                 "${workspaceRoot}/Wave Bubble/Makefile",
-                "CFG=Firmware",
+                "CFG=Production",
                 "clean"
             ],
             "group": {

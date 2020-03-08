@@ -21,7 +21,7 @@
             "compilerPath": ""
         },
         {
-            "name": "Firmware",
+            "name": "Production",
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/Program Files (x86)/Atmel/Studio/7.0/toolchain/avr8/avr8-gnu-toolchain/**"
@@ -33,7 +33,7 @@
                 "__AVR_ATmega168__",
                 "__AVR_DEV_LIB_NAME__=m168",
                 "F_CPU=8000000UL",
-                "FIRMWARE"
+                "PRODUCTION"
             ],
             "cStandard": "c99",
             "cppStandard": "c++03",

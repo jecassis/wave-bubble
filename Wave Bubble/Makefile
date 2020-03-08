@@ -27,9 +27,9 @@
 #----------------------------------------------------------------------------
 
 ifeq ($(CFG),)
-    $(info Configuration not specified - using operational configuration)
+    $(info Configuration not specified - using Production configuration)
     $(info )
-    CFG = Firmware
+    CFG = Production
 endif
 
 AVR := C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin
@@ -66,8 +66,8 @@ MAIN := wavebubble
 ifeq ($(CFG),Test)
     TARGET := $(MAIN)-test
 endif
-ifeq ($(CFG),Firmware)
-    TARGET := $(MAIN)-firmware
+ifeq ($(CFG),Production)
+    TARGET := $(MAIN)-production
 endif
 
 
@@ -131,10 +131,10 @@ ifeq ($(CFG),Test)
     ADEFS += -DTEST
     CPPDEFS += -DTEST
 endif
-ifeq ($(CFG),Firmware)
-    CDEFS += -DFIRMWARE
-    ADEFS += -DFIRMWARE
-    CPPDEFS += -DFIRMWARE
+ifeq ($(CFG),Production)
+    CDEFS += -DPRODUCTION
+    ADEFS += -DPRODUCTION
+    CPPDEFS += -DPRODUCTION
 endif
 
 #---------------- Compiler Options C ----------------
@@ -278,7 +278,7 @@ AVRDUDE_WRITE_EEPROM = -pe -ve -ie$(OBJDIR)/$(TARGET).eep
 # SPI clock frequency in KHz = 1000 / (1.5 + B) where B is the bitclock
 # Set ISP frequency to 125kHz
 AVRDUDE_ISP_FREQ =
-ifeq ($(CFG),Firmware)
+ifeq ($(CFG),Production)
 	#AVRDUDE_ISP_FREQ += -B 6.5
 	AVRDUDE_ISP_FREQ += -I125000
 endif
@@ -303,6 +303,7 @@ AVRDUDE_FLAGS := -d$(MCU) -c$(AVRDUDE_PORT)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ISP_FREQ)
+#AVRDUDE_FLAGS += -U lfuse:w:0xe2:m -U hfuse:w:0xd5:m -U efuse:w:0xff:m 
 
 #---------------- Debugging Options ----------------
 # For simulavr only - target MCU frequency.
