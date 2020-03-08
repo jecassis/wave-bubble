@@ -202,14 +202,18 @@ uint8_t tune_rf(uint16_t freq) {
   high = 4095;
 #endif
   while ((low + 2) <= high) {
-    // putnum_ud(low);
-    // uart_putchar('/');
-    // putnum_ud(high);
-    // uart_putchar('\t');
+#ifdef DEBUG
+    putnum_ud(low);
+    uart_putchar('/');
+    putnum_ud(high);
+    uart_putchar('\t');
+#endif
     i = ((uint16_t)low + (uint16_t)high) / 2;
     OCR1A = i;
-    // putnum_ud(OCR1A);
-    // pc_puts(", ");
+#ifdef DEBUG
+    putnum_ud(OCR1A);
+    pc_puts(", ");
+#endif
     delay_ms(500);
     if (PLL_RFIN_PIN & _BV(PLL_RFIN)) {
       delay_ms(1);
@@ -275,8 +279,10 @@ uint8_t tune_if(uint16_t freq) {
   while ((low + 2) <= high) {
     i = ((uint16_t)low + (uint16_t)high) / 2;
     OCR1B = i;
-    // putnum_ud(OCR1B);
-    // pc_puts(", ");
+#ifdef DEBUG
+    putnum_ud(OCR1B);
+    pc_puts(", ");
+#endif
     delay_ms(500);
     if (PLL_IFIN_PIN & _BV(PLL_IFIN)) {
       delay_ms(1);
@@ -357,14 +363,18 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     ADCSRA |= _BV(ADSC);
     while (ADCSRA & _BV(ADSC)) {} // wait for conversion to finish
     avg += ADC;
-    // putnum_ud(t);
-    // pc_putc(' ');
+#ifdef DEBUG
+    putnum_ud(t);
+    pc_putc(' ');
+#endif
   }
   avg /= 128;
   threshhold = avg;
-  // pc_puts("thres = ");
-  // putnum_ud(threshhold);
-  // pc_putc('\n');
+#ifdef DEBUG
+  pc_puts("threshold = ");
+  putnum_ud(threshhold);
+  pc_putc('\n');
+#endif
 
   low = 0;
   high = 255;
@@ -376,8 +386,10 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     } else {
       set_resistor(BANDWADJ2_RES, i);
     }
-    // putnum_ud(i);
-    // pc_puts(", ");
+#ifdef DEBUG
+    putnum_ud(i);
+    pc_puts(", ");
+#endif
     delay_ms(500);
 
     // Read ADC
@@ -391,12 +403,16 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
       ADCSRA |= _BV(ADSC);
       while (ADCSRA & _BV(ADSC)) {} // Wait for conversion to finish
       avg += ADC;
-      // putnum_ud(t);
-      // uart_putchar(' ');
+#ifdef DEBUG
+      putnum_ud(t);
+      uart_putchar(' ');
+#endif
     }
     avg /= 128;
-    // putnum_ud(avg);
-    // pc_putc('\n');
+#ifdef DEBUG
+    putnum_ud(avg);
+    pc_putc('\n');
+#endif
     if (avg < (threshhold - 10)) {
       high = i;
     } else {
