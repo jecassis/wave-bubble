@@ -230,6 +230,7 @@ Notes:
 - JP7 shorted between pads 2 and 3.
 - [Missing R43 pads in PCB](https://forums.adafruit.com/viewtopic.php?f=16&t=22158), used 1206 package resistor to bridge the gap.
 - Cut D1 ground pad to 5V trace short in PCB.
+- Used 1Ω (not 15Ω) for R28 and R29 with SGA-7489Z to meet the operating voltage and current specs on the gain stages' amplifier data sheet.
 
 ### Data Sheets
 
@@ -252,7 +253,7 @@ Notes:
 - [MIC2514](http://ww1.microchip.com/downloads/en/DeviceDoc/mic2514.pdf)
 - [ROS-1300](https://www.minicircuits.com/pdfs/ROS-1300+.pdf)
 - [ROS-2700-1819](https://www.minicircuits.com/pdfs/ROS-2700-1819+.pdf)
-- [SGA-7489Z](https://media.digikey.com/pdf/Data%20Sheets/Sirenza%20Microdevices/SGA-7489(Z)_Datasheet.pdf)
+- [SGA-7489Z](https://www.qorvo.com/products/d/da001748)
 - [ABMM-10.000MHZ](https://abracon.com/Resonators/ABMM.pdf)
 - [SMAZ22-13-F](https://www.diodes.com/assets/Datasheets/ds18015.pdf)
 
