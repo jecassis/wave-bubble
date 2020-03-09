@@ -456,7 +456,6 @@ static void display_programs(void) {
     eeprom_read_block(&setting,
                       &settings_ee + sizeof(jammer_setting) * i,
                       sizeof(jammer_setting));
-
     print_program(&setting, i, progs);
   }
 }
@@ -772,7 +771,7 @@ int main(void) {
   // Check EEPROM validity
   init_eeprom();
 
-  pc_puts_P(PSTR("Wave Bubble\nFW: " __DATE__ " / " __TIME__ "\n"));
+  pc_puts_P(PSTR("Wave Bubble\nFW: " __DATE__ " / " __TIME__ "\n\n"));
 
   uint8_t progs, program_num;
   jammer_setting setting;
@@ -783,7 +782,7 @@ int main(void) {
   }
 
   if (progs != 0) {
-    pc_puts_P(PSTR("Press key to enter menu..."));
+    pc_puts_P(PSTR("Press key to enter menu...\n"));
     delay_ms(2000);
   }
 
@@ -800,9 +799,11 @@ run_prog: // Go here when program key is pressed, switch to next program
   if (progs == 0) {
     pc_puts_P(PSTR("No programs stored.\n\n"));
     goto no_progs;
-  }
-  if (progs > MAX_PROGRAMS) {
+  } else if (progs > MAX_PROGRAMS) {
     progs = MAX_PROGRAMS;
+  } else if (progs != 0) {
+    pc_putc('\n');
+    print_div();
   }
 
   program_num = eeprom_read_byte(&curr_program);
@@ -816,7 +817,6 @@ run_prog: // Go here when program key is pressed, switch to next program
 
   pc_putc('\n');
   print_program(&setting, program_num, progs);
-
   print_div();
 
   if ((setting.dc_offset1 == 0) && (setting.bandwidth1 == 0) &&
