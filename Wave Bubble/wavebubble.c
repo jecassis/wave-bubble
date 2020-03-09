@@ -45,7 +45,7 @@
 
 #ifdef TEST
 volatile char in_char = 0;
-#else // PRODUCTION
+#else // OPERATION
 uint8_t EEMEM settings_ee;      // Offset to save setting (EEPROM byte offset: 0x06)
 uint8_t EEMEM curr_program = 0; // Number of program in use (EEPROM byte offset: 0x05)
 uint8_t EEMEM num_programs = 0; // Number of programs in EEPROM (EEPROM byte offset: 0x04)
@@ -336,7 +336,7 @@ int main(void) {
   return 0;
 }
 
-#else // PRODUCTION
+#else // OPERATION
 
 /*
  * Milliseconds delay function using 1ms system tick from timer0.
@@ -840,16 +840,19 @@ run_prog: // Go here when program key is pressed, switch to next program
   for (;;) {
     // Check battery voltage
     uint16_t batt = 0;
-    ADMUX = 6;
+    ADMUX = LOWBATT_ADC_MUX_SELECT;
     ADCSRA |= _BV(ADSC);
-    while (ADCSRA & _BV(ADSC)) {} // Wait for conversion to finish
+    loop_until_bit_is_clear(ADCSRA, ADSC);
     batt = ADC;
-    // putnum_ud(batt);
-    // pc_putc('\n');
+#ifdef DEBUG
+    putnum_ud(batt);
+    pc_putc('\n');
+#endif
 
-    // Reset low battery timer as long as battery voltage is good
-    if (batt > 310) {
-      lowbatt_timer = 100; // 100 x 10ms time for low battery before power off
+    if (batt > LOWBATT_MINIMUM) {
+      // Reset low battery timer
+      // 100ms = 100 x 1ms time for low battery before power off
+      lowbatt_timer = 100;
     }
 
     if (lowbatt_timer == 0) {

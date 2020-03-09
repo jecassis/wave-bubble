@@ -172,10 +172,10 @@ void pll_set_freq(uint16_t rf_freq, uint8_t P, uint8_t reg) {
 uint8_t tune_rf(uint16_t freq) {
   uint16_t i = 0, low, high;
 
-  pll_set_rf(freq, 8);
+  pll_set_rf(freq, LMX2433_PRESCALER_8_9);
 
   set_resistor(BANDWADJ1_RES, 0);
-  POWERCTL1_PORT |= _BV(POWERCTL1); // Turn on VCO
+  POWERCTL1_PORT |= _BV(POWERCTL1); // Turn on VCO1
 
 #ifdef TEST
   OCR1A = 5;
@@ -183,7 +183,6 @@ uint8_t tune_rf(uint16_t freq) {
   OCR1A = 10;
 #endif
   delay_ms(500);
-
   if (PLL_RFIN_PIN & _BV(PLL_RFIN)) { // Cannot tune any lower...???
     pc_puts_P(PSTR("RF VCO range is too high!\n\n"));
     return 0;
@@ -195,7 +194,6 @@ uint8_t tune_rf(uint16_t freq) {
   OCR1A = 4095;
 #endif
   delay_ms(500);
-
   if (!(PLL_RFIN_PIN & _BV(PLL_RFIN))) { // Cannot tune any higher...???
     pc_puts_P(PSTR("RF VCO range is too low!\n\n"));
     return 0;
@@ -208,16 +206,14 @@ uint8_t tune_rf(uint16_t freq) {
 #else
   high = 4095;
 #endif
-  while ((low + 2) <= high) {
+  while ((low + 1) < high) {
+    i = ((uint16_t)low + (uint16_t)high) / 2;
+    OCR1A = i;
 #ifdef DEBUG
     putnum_ud(low);
     uart_putchar('/');
     putnum_ud(high);
     uart_putchar('\t');
-#endif
-    i = ((uint16_t)low + (uint16_t)high) / 2;
-    OCR1A = i;
-#ifdef DEBUG
     putnum_ud(OCR1A);
     pc_puts(", ");
 #endif
@@ -247,10 +243,10 @@ uint8_t tune_rf(uint16_t freq) {
 uint8_t tune_if(uint16_t freq) {
   uint16_t i = 0, low, high;
 
-  pll_set_if(freq, 8);
+  pll_set_if(freq, LMX2433_PRESCALER_8_9);
 
   set_resistor(BANDWADJ2_RES, 0);
-  POWERCTL2_PORT |= _BV(POWERCTL2); // Turn on VCO
+  POWERCTL2_PORT |= _BV(POWERCTL2); // Turn on VCO2
 
 #ifdef TEST
   OCR1B = 5;
@@ -258,7 +254,6 @@ uint8_t tune_if(uint16_t freq) {
   OCR1B = 10;
 #endif
   delay_ms(500);
-
   if (PLL_IFIN_PIN & _BV(PLL_IFIN)) { // Cannot tune any lower...???
     pc_puts_P(PSTR("IF VCO range is too high!\n\n"));
     return 0;
@@ -270,7 +265,6 @@ uint8_t tune_if(uint16_t freq) {
   OCR1B = 4095;
 #endif
   delay_ms(500);
-
   if (!(PLL_IFIN_PIN & _BV(PLL_IFIN))) { // Cannot tune any higher...???
     pc_puts_P(PSTR("IF VCO range is too low!\n\n"));
     return 0;
@@ -283,10 +277,13 @@ uint8_t tune_if(uint16_t freq) {
 #else
   high = 4095;
 #endif
-  while ((low + 2) <= high) {
+  while ((low + 1) < high) {
     i = ((uint16_t)low + (uint16_t)high) / 2;
     OCR1B = i;
 #ifdef DEBUG
+    putnum_ud(low);
+    uart_putchar('/');
+    putnum_ud(high);
     putnum_ud(OCR1B);
     pc_puts(", ");
 #endif
@@ -385,7 +382,7 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
 
   low = 0;
   high = 255;
-  while ((low + 2) <= high) {
+  while ((low + 1) < high) {
     i = ((uint16_t)low + (uint16_t)high) / 2;
     // Set the bandwidth
     if (vco_num == 0) {
