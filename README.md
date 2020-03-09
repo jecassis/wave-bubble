@@ -46,6 +46,20 @@ Connect the battery board to the main board via the 4-pin jumper. Power the main
 
 See [Makefile](./Wave%20Bubble/Makefile) or [MSBuild configuration](./Wave%20Bubble/Wave%20Bubble.cproj).
 
+Firmware notes:
+
+- Oscillator calibration (i.e. OSCCAL) is not needed in firmware, produces garbage serial output.
+- Be aware of variable sizing and cast appropriately when bit shifting. Understand and fix all warnings.
+- Unintuitive EEPROM memory layout. Importand because `settings_ee` section grows and can clobber other memory. Last variable declared (`dummy` below) for `.eeprom` section is lowest address in memory and first (`settings_ee` below) is highest:
+
+```c
+uint8_t EEMEM settings_ee;      // Offset to save setting (EEPROM byte offset: 0x06)
+uint8_t EEMEM curr_program = 0; // Number of program in use (EEPROM byte offset: 0x05)
+uint8_t EEMEM num_programs = 0; // Number of programs in EEPROM (EEPROM byte offset: 0x04)
+uint16_t EEMEM validity = 0;    // Validity value to check for empty EEPROM (EEPROM byte offset: 0x02)
+uint16_t EEMEM dummy = 0;       // A dummy word to prevent data corruption (EEPROM byte offset: 0x00)
+```
+
 ### Flashing
 
 Build and flash the `.hex` (or `.elp`) file using an AVR programmer.
@@ -216,10 +230,8 @@ Notes:
 - JP7 shorted between pads 2 and 3.
 - [Missing R43 pads in PCB](https://forums.adafruit.com/viewtopic.php?f=16&t=22158), used 1206 package resistor to bridge the gap.
 - Cut D1 ground pad to 5V trace short in PCB.
-- Oscillator calibration (i.e. OSCCAL) is not needed in firmware, produces garbage serial output.
-- Be aware of sizing and cast appropriately when bit shifting.
 
-### Datasheets
+### Data Sheets
 
 - [FT232RL](https://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_FT232R.pdf)
 - [FDN302P](https://www.onsemi.com/pub/Collateral/FDN302P-D.PDF)
@@ -240,7 +252,7 @@ Notes:
 - [MIC2514](http://ww1.microchip.com/downloads/en/DeviceDoc/mic2514.pdf)
 - [ROS-1300](https://www.minicircuits.com/pdfs/ROS-1300+.pdf)
 - [ROS-2700-1819](https://www.minicircuits.com/pdfs/ROS-2700-1819+.pdf)
-- [SGA-7489Z](<https://media.digikey.com/pdf/Data%20Sheets/Sirenza%20Microdevices/SGA-7489(Z)_Datasheet.pdf>)
+- [SGA-7489Z](https://media.digikey.com/pdf/Data%20Sheets/Sirenza%20Microdevices/SGA-7489(Z)_Datasheet.pdf)
 - [ABMM-10.000MHZ](https://abracon.com/Resonators/ABMM.pdf)
 - [SMAZ22-13-F](https://www.diodes.com/assets/Datasheets/ds18015.pdf)
 
