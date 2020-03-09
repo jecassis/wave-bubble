@@ -78,7 +78,7 @@
             }
         },
         {
-            "label": "Build production firmware",
+            "label": "Build operation firmware",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceRoot}/Wave Bubble"
@@ -89,7 +89,7 @@
                 "${workspaceRoot}/Wave Bubble",
                 "-f",
                 "${workspaceRoot}/Wave Bubble/Makefile",
-                "CFG=Production",
+                "CFG=Operation",
                 "all"
             ],
             "group": {
@@ -116,7 +116,7 @@
             }
         },
         {
-            "label": "Clean production firmware",
+            "label": "Clean operation firmware",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceRoot}/Wave Bubble"
@@ -127,7 +127,7 @@
                 "${workspaceRoot}/Wave Bubble",
                 "-f",
                 "${workspaceRoot}/Wave Bubble/Makefile",
-                "CFG=Production",
+                "CFG=Operation",
                 "clean"
             ],
             "group": {

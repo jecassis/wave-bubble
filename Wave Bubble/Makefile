@@ -27,9 +27,9 @@
 #----------------------------------------------------------------------------
 
 ifeq ($(CFG),)
-    $(info Configuration not specified - using Production configuration)
+    $(info Configuration not specified - using Operation configuration)
     $(info )
-    CFG = Production
+    CFG = Operation
 endif
 
 AVR := C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin
@@ -66,8 +66,8 @@ MAIN := wavebubble
 ifeq ($(CFG),Test)
     TARGET := $(MAIN)-test
 endif
-ifeq ($(CFG),Production)
-    TARGET := $(MAIN)-production
+ifeq ($(CFG),Operation)
+    TARGET := $(MAIN)-operation
 endif
 
 
@@ -131,10 +131,10 @@ ifeq ($(CFG),Test)
     ADEFS += -DTEST
     CPPDEFS += -DTEST
 endif
-ifeq ($(CFG),Production)
-    CDEFS += -DPRODUCTION
-    ADEFS += -DPRODUCTION
-    CPPDEFS += -DPRODUCTION
+ifeq ($(CFG),Operation)
+    CDEFS += -DOPERATION
+    ADEFS += -DOPERATION
+    CPPDEFS += -DOPERATION
 endif
 
 #---------------- Compiler Options C ----------------
@@ -278,7 +278,7 @@ AVRDUDE_WRITE_EEPROM = -pe -ve -ie$(OBJDIR)/$(TARGET).eep
 # SPI clock frequency in KHz = 1000 / (1.5 + B) where B is the bitclock
 # Set ISP frequency to 125kHz
 AVRDUDE_ISP_FREQ =
-ifeq ($(CFG),Production)
+ifeq ($(CFG),Operation)
 	#AVRDUDE_ISP_FREQ += -B 6.5
 	AVRDUDE_ISP_FREQ += -I125000
 endif

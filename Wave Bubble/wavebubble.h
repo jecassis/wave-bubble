@@ -64,7 +64,7 @@
 
 #ifdef TEST
 extern volatile char in_char;
-#else // PRODUCTION
+#else // OPERATION
 // 14-byte structure holding jammer program settings in EEPROM
 typedef struct {
   uint16_t startfreq1, endfreq1; // Start and end frequencies in MHz
