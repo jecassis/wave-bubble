@@ -4,5 +4,12 @@
         "**/.prettierrc": "yaml",
         "**/*.h": "c"
     },
+    "search.exclude": {
+        "**/Debug/*": true,
+        "**/Operation/*": true,
+        "**/Test/*": true,
+        "**/*.brd": true,
+        "**/*.sch": true
+    },
     "git.ignoreLimitWarning": true
 }

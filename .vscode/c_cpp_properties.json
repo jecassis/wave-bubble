@@ -17,8 +17,8 @@
             ],
             "cStandard": "c99",
             "cppStandard": "c++03",
-            "intelliSenseMode": "gcc-x64",
-            "compilerPath": ""
+            "intelliSenseMode": "msvc-x64",
+            "compilerPath": "C:\\Program Files (x86)\\Atmel\\Studio\\7.0\\toolchain\\avr8\\avr8-gnu-toolchain\\bin\\avr-gcc.exe"
         },
         {
             "name": "Operation",
@@ -37,15 +37,8 @@
             ],
             "cStandard": "c99",
             "cppStandard": "c++03",
-            "intelliSenseMode": "gcc-x64",
-            "compilerArgs": [],
-            "browse": {
-                "path": [
-                    "${workspaceFolder}/**",
-                    "C:/Program Files (x86)/Atmel/Studio/7.0/toolchain/avr8/avr8-gnu-toolchain/**"
-                ],
-                "limitSymbolsToIncludedHeaders": true
-            }
+            "intelliSenseMode": "msvc-x64",
+            "compilerPath": "C:\\Program Files (x86)\\Atmel\\Studio\\7.0\\toolchain\\avr8\\avr8-gnu-toolchain\\bin\\avr-gcc.exe"
         }
     ],
     "version": 4
