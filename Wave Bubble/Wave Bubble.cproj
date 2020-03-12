@@ -183,6 +183,12 @@
     <Compile Include="test.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="tuner.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tuner.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="wavebubble.c">
       <SubType>compile</SubType>
     </Compile>

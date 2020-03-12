@@ -10,10 +10,11 @@
 #include <avr/pgmspace.h>
 
 #include "serial.h"
-#include "wavebubble.h"
 #ifdef TEST
 #include "test.h"
 #endif
+#include "tuner.h"
+#include "wavebubble.h"
 
 /*
  * Send data to a specific PLL address.

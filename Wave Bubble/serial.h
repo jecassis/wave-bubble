@@ -18,11 +18,12 @@
 
 extern void usart_init(void);
 extern void pc_putc(char data);
-extern char pc_getc(void);
 extern void pc_puts(char *s);
 extern void pc_puts_P(const char *s);
+extern char pc_getc(void);
+extern uint16_t pc_read16(void);
+extern void putnum_uh(uint16_t n);
 extern void putnum_ud(uint16_t n);
 extern void print_div(void);
-extern uint16_t pc_read16(void);
 
 #endif

@@ -4,6 +4,7 @@
  * Hardware test functions.
  *
  */
+
 #ifdef TEST
 
 #include "test.h"
@@ -11,6 +12,7 @@
 #include <util/delay.h>
 
 #include "pll.h"
+#include "tuner.h"
 #include "wavebubble.h"
 
 /*

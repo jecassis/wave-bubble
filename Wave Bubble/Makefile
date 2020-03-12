@@ -77,7 +77,7 @@ endif
 OBJDIR := $(CFG)
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC := serial.c test.c pll.c $(MAIN).c
+SRC := serial.c test.c pll.c tuner.c $(MAIN).c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC :=

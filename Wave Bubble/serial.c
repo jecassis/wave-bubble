@@ -4,6 +4,7 @@
  * USART and serial I/O functions.
  *
  */
+
 #include "serial.h"
 
 #include <avr/interrupt.h>
@@ -99,6 +100,68 @@ char pc_getc(void) {
 }
 
 /*
+ * Get unisgned integer from PC.
+ *
+ * Returns received number
+ *
+*/
+uint16_t pc_read16(void) {
+  uint8_t c;
+  uint16_t t = 0;
+  while ((c = pc_getc()) != '\n') {
+    if (c == '\r') {
+      break;
+    }
+    if ((c > '9') || (c < '0')) {
+      continue;
+    }
+    pc_putc(c);
+    t *= 10;
+    t += c - '0';
+  }
+  pc_putc(c);
+
+  return t;
+}
+
+/*
+ * Send hexadecimal-equivalent character byte to PC.
+ *
+ * hex: Digit to send
+ *
+ */
+static void pc_puth(uint8_t hex) {
+  hex &= 0xF;
+  if (hex < 10) {
+    pc_putc('0' + hex);
+  } else {
+    pc_putc('A' - 10 + hex);
+  }
+}
+
+/*
+ * Print unsigned hexadecimal on terminal.
+ *
+ * n: Number to print on terminal
+ *
+ */
+void putnum_uh(uint16_t n) {
+  if (n >> 12) {
+    pc_puth(n >> 12);
+  }
+
+  if (n >> 8) {
+    pc_puth(n >> 8);
+  }
+
+  if (n >> 4) {
+    pc_puth(n >> 4);
+  }
+
+  pc_puth(n);
+}
+
+/*
  * Print unsigned integer on terminal.
  *
  * n: Number to print on terminal
@@ -156,29 +219,4 @@ void putnum_ud(uint16_t n) {
  */
 void print_div(void) {
   pc_puts_P(PSTR("---------------------------------\n"));
-}
-
-/*
- * Get unisgned integer from PC.
- *
- * Returns received number
- *
-*/
-uint16_t pc_read16(void) {
-  uint8_t c;
-  uint16_t t = 0;
-  while ((c = pc_getc()) != '\n') {
-    if (c == '\r') {
-      break;
-    }
-    if ((c > '9') || (c < '0')) {
-      continue;
-    }
-    pc_putc(c);
-    t *= 10;
-    t += c - '0';
-  }
-  pc_putc(c);
-
-  return t;
 }
