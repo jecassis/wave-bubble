@@ -7,6 +7,7 @@
 
 #include "pll.h"
 
+#include <avr/cpufunc.h>
 #include <avr/pgmspace.h>
 
 #include "serial.h"
@@ -33,7 +34,7 @@ void pll_tx(uint32_t data, uint8_t addr) {
 
 #ifdef DEBUG
   if (addr > LMX2433_R5_IF_TOC_ADDRESS) {
-    pc_puts_P(PSTR("Register does not exist."));
+    usart_puts_P(PSTR("Register does not exist."));
     return;
   }
 #endif
@@ -53,12 +54,12 @@ void pll_tx(uint32_t data, uint8_t addr) {
     } else {
       PLLDATA_PORT &= ~_BV(PLLDATA);
     }
-    nop();
+    _NOP();
 
     // t_CS: DATA to CLK Setup Time -- 50ns minimum
     // Set CLK high to latch the DATA bit
     PLLCLK_PORT |= _BV(PLLCLK);
-    nop();
+    _NOP();
 
     // t_CWH: CLK Pulse Width High -- 50ns minimum
     // t_CH: DATA to CLK Hold Time -- 10ns minimum
@@ -72,7 +73,7 @@ void pll_tx(uint32_t data, uint8_t addr) {
   // Pull LE line high to latch DATA into the register
   // t_EW: LE Pulse Width -- 50ns minimum
   PLLLE_PORT |= _BV(PLLLE);
-  nop();
+  _NOP();
   PLLLE_PORT &= ~_BV(PLLLE);
   PLLDATA_PORT &= ~_BV(PLLDATA);
 }
@@ -108,9 +109,9 @@ void pll_init(void) {
 /*
  * Set PLL frequency and prescaler.
  *
- * rf_freq:   RF frequency to set
- * P:         PLL prescaler
- * reg:       PLL stage to use, RF or IF
+ * rf_freq: RF frequency to set
+ * P:       PLL prescaler
+ * reg:     PLL stage to use, RF or IF
  *
  */
 void pll_set_freq(uint16_t rf_freq, uint8_t P, uint8_t reg) {
@@ -121,7 +122,7 @@ void pll_set_freq(uint16_t rf_freq, uint8_t P, uint8_t reg) {
 #ifdef DEBUG
   if (((reg != LMX2433_R1_RF_N_ADDRESS) && (reg != LMX2433_R4_IF_N_ADDRESS)) ||
       ((P != LMX2433_PRESCALER_8_9) && (P != LMX2433_PRESCALER_16_17))) {
-    pc_puts_P(PSTR("Can only write to R1 (RF) and R4 (IF) and use 8/9 and 16/17 as prescalers."));
+    usart_puts_P(PSTR("Can only write to R1 (RF) and R4 (IF) and use 8/9 and 16/17 as prescalers."));
     return;
   }
 #endif
@@ -142,15 +143,15 @@ void pll_set_freq(uint16_t rf_freq, uint8_t P, uint8_t reg) {
   }
   A = N % P;
 
-  pc_puts_P(PSTR("Set PLL for RF frequency "));
+  usart_puts_P(PSTR("Set PLL for RF frequency "));
   putnum_ud(N);
-  pc_puts_P(PSTR("MHz & prescaler "));
+  usart_puts_P(PSTR("MHz & prescaler "));
   putnum_ud(P);
-  pc_puts_P(PSTR(": B="));
+  usart_puts_P(PSTR(": B="));
   putnum_ud(B);
-  pc_puts_P(PSTR(" A="));
+  usart_puts_P(PSTR(" A="));
   putnum_ud(A);
-  pc_putc('\n');
+  usart_putc('\n');
 
   // The R1/R4 registers contains the RF_A/IF_A, RF_B/IF_B, RF_P/IF_P, and RF_PD/IF_PD control words;
   // the RF_A/IF_A and RF_B/IF_B control words are used to set up the programmable feedback divider
@@ -185,7 +186,7 @@ uint8_t tune_rf(uint16_t freq) {
 #endif
   delay_ms(500);
   if (PLL_RFIN_PIN & _BV(PLL_RFIN)) { // Cannot tune any lower...???
-    pc_puts_P(PSTR("RF VCO range is too high!\n\n"));
+    usart_puts_P(PSTR("RF VCO range is too high!\n\n"));
     return 0;
   }
 
@@ -196,11 +197,11 @@ uint8_t tune_rf(uint16_t freq) {
 #endif
   delay_ms(500);
   if (!(PLL_RFIN_PIN & _BV(PLL_RFIN))) { // Cannot tune any higher...???
-    pc_puts_P(PSTR("RF VCO range is too low!\n\n"));
+    usart_puts_P(PSTR("RF VCO range is too low!\n\n"));
     return 0;
   }
 
-  pc_puts_P(PSTR("Midpoint at "));
+  usart_puts_P(PSTR("Midpoint at "));
   low = 0;
 #ifdef TEST
   high = 255;
@@ -216,7 +217,7 @@ uint8_t tune_rf(uint16_t freq) {
     putnum_ud(high);
     uart_putchar('\t');
     putnum_ud(OCR1A);
-    pc_puts(", ");
+    usart_puts(", ");
 #endif
     delay_ms(500);
     if (PLL_RFIN_PIN & _BV(PLL_RFIN)) {
@@ -229,7 +230,7 @@ uint8_t tune_rf(uint16_t freq) {
     }
   }
   putnum_ud(i);
-  pc_putc('\n');
+  usart_putc('\n');
 
   return i;
 }
@@ -256,7 +257,7 @@ uint8_t tune_if(uint16_t freq) {
 #endif
   delay_ms(500);
   if (PLL_IFIN_PIN & _BV(PLL_IFIN)) { // Cannot tune any lower...???
-    pc_puts_P(PSTR("IF VCO range is too high!\n\n"));
+    usart_puts_P(PSTR("IF VCO range is too high!\n\n"));
     return 0;
   }
 
@@ -267,11 +268,11 @@ uint8_t tune_if(uint16_t freq) {
 #endif
   delay_ms(500);
   if (!(PLL_IFIN_PIN & _BV(PLL_IFIN))) { // Cannot tune any higher...???
-    pc_puts_P(PSTR("IF VCO range is too low!\n\n"));
+    usart_puts_P(PSTR("IF VCO range is too low!\n\n"));
     return 0;
   }
 
-  pc_puts_P(PSTR("Midpoint at "));
+  usart_puts_P(PSTR("Midpoint at "));
   low = 0;
 #ifdef TEST
   high = 255;
@@ -286,7 +287,7 @@ uint8_t tune_if(uint16_t freq) {
     uart_putchar('/');
     putnum_ud(high);
     putnum_ud(OCR1B);
-    pc_puts(", ");
+    usart_puts(", ");
 #endif
     delay_ms(500);
     if (PLL_IFIN_PIN & _BV(PLL_IFIN)) {
@@ -299,7 +300,7 @@ uint8_t tune_if(uint16_t freq) {
     }
   }
   putnum_ud(i);
-  pc_putc('\n');
+  usart_putc('\n');
 
   return i;
 }
@@ -344,7 +345,7 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     return 0;
   }
 
-  pc_puts_P(PSTR("\nBandwidth tuning...\n"));
+  usart_puts_P(PSTR("\nBandwidth tuning...\n"));
 
   if (vco_num == 0) {
     pll_set_rf(min, 8);
@@ -370,15 +371,15 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     avg += ADC;
 #ifdef DEBUG
     putnum_ud(t);
-    pc_putc(' ');
+    usart_putc(' ');
 #endif
   }
   avg /= 128;
   threshhold = avg;
 #ifdef DEBUG
-  pc_puts("threshold = ");
+  usart_puts("threshold = ");
   putnum_ud(threshhold);
-  pc_putc('\n');
+  usart_putc('\n');
 #endif
 
   low = 0;
@@ -393,7 +394,7 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     }
 #ifdef DEBUG
     putnum_ud(i);
-    pc_puts(", ");
+    usart_puts(", ");
 #endif
     delay_ms(500);
 
@@ -416,7 +417,7 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
     avg /= 128;
 #ifdef DEBUG
     putnum_ud(avg);
-    pc_putc('\n');
+    usart_putc('\n');
 #endif
     if (avg < (threshhold - 10)) {
       high = i;
@@ -424,9 +425,9 @@ uint8_t tune_rf_band(uint16_t min, uint16_t max, uint8_t vco_num) {
       low = i;
     }
   }
-  pc_puts_P(PSTR("Done! Variable resistor: "));
+  usart_puts_P(PSTR("Done! Variable resistor: "));
   putnum_ud(i);
-  pc_puts_P(PSTR("\n\n"));
+  usart_puts_P(PSTR("\n\n"));
   set_sawtooth_high();
 
   return i;

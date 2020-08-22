@@ -9,23 +9,23 @@
  *
  * Copyright (c) 2020 Jimmy Cassis
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  */
 
@@ -34,6 +34,7 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #ifndef TEST
+#include <avr/cpufunc.h>
 #include <avr/eeprom.h>
 #include <ctype.h>
 #include <util/delay.h>
@@ -64,7 +65,7 @@ volatile uint8_t lowbatt_timer = 0; // One second timer for low battery threshol
  *
  */
 static void power_off(void) {
-  pc_puts_P(PSTR("Powering OFF...\n"));
+  usart_puts_P(PSTR("Powering OFF...\n"));
   delay_ms(400);
 
   // Power OFF device
@@ -122,31 +123,31 @@ int main(void) {
   // Set NE555 mode
   set_sawtooth_low();
 
-  pc_puts_P(PSTR("Wave Bubble - Hardware Test\nFW: " __DATE__ " / " __TIME__ "\n\n"));
+  usart_puts_P(PSTR("Wave Bubble - Hardware Test\nFW: " __DATE__ " / " __TIME__ "\n\n"));
 
-  pc_puts_P(PSTR("Serial connection test passed.\n\n"));
+  usart_puts_P(PSTR("Serial connection test passed.\n\n"));
 
-  pc_puts_P(PSTR("Select a test:\n"));
-  pc_puts_P(PSTR("a - Power/Program LED test\n"));             // TP1
-  pc_puts_P(PSTR("b - NE555 low frequency mode\n"));           // TP2
-  pc_puts_P(PSTR("c - NE555 high frequency mode\n"));          // TP2
-  pc_puts_P(PSTR("d - Digital potentiometer sweep\n"));        // TP3 + TP4
-  pc_puts_P(PSTR("e - Set digital potentiometer minimum\n"));  // TP3 + TP4
-  pc_puts_P(PSTR("f - Set digital potentiometer maximum\n"));  // TP3 + TP4
-  pc_puts_P(PSTR("g - Power switch VCO1 (HI) test\n"));        // TP5
-  pc_puts_P(PSTR("h - Power switch VCO2 (LO) test\n"));        // TP6
-  pc_puts_P(PSTR("i - VCO1 (HI) power toggle\n"));             // TP5
-  pc_puts_P(PSTR("j - VCO2 (LO) power toggle\n"));             // TP6
-  pc_puts_P(PSTR("k - PWM tuning voltage generator sweep\n")); // TP7 + TP8
-  pc_puts_P(PSTR("l - Set PWM tuning voltage minimum\n"));     // TP7 + TP8
-  pc_puts_P(PSTR("m - Set PWM tuning voltage maximum\n"));     // TP7 + TP8
-  pc_puts_P(PSTR("n - Increase PWM tuning voltage by 1\n"));   // TP7 + TP8
-  pc_puts_P(PSTR("o - Decrease PWM tuning voltage by 1\n"));   // TP7 + TP8
-  pc_puts_P(PSTR("p - VCO sweep test\n"));                     // TP9 + TP10
-  pc_puts_P(PSTR("q - PLL test 1 - DATA signal 5Hz\n"));       // TP11 + TP12
-  pc_puts_P(PSTR("r - PLL test 2 - RF stage\n"));              // TP13
-  pc_puts_P(PSTR("s - PLL test 2 - IF stage\n"));              // TP14
-  pc_puts_P(PSTR("\nz - Power OFF\n"));
+  usart_puts_P(PSTR("Select a test:\n"));
+  usart_puts_P(PSTR("a - Power/Program LED test\n"));             // TP1
+  usart_puts_P(PSTR("b - NE555 low frequency mode\n"));           // TP2
+  usart_puts_P(PSTR("c - NE555 high frequency mode\n"));          // TP2
+  usart_puts_P(PSTR("d - Digital potentiometer sweep\n"));        // TP3 + TP4
+  usart_puts_P(PSTR("e - Set digital potentiometer minimum\n"));  // TP3 + TP4
+  usart_puts_P(PSTR("f - Set digital potentiometer maximum\n"));  // TP3 + TP4
+  usart_puts_P(PSTR("g - Power switch VCO1 (HI) test\n"));        // TP5
+  usart_puts_P(PSTR("h - Power switch VCO2 (LO) test\n"));        // TP6
+  usart_puts_P(PSTR("i - VCO1 (HI) power toggle\n"));             // TP5
+  usart_puts_P(PSTR("j - VCO2 (LO) power toggle\n"));             // TP6
+  usart_puts_P(PSTR("k - PWM tuning voltage generator sweep\n")); // TP7 + TP8
+  usart_puts_P(PSTR("l - Set PWM tuning voltage minimum\n"));     // TP7 + TP8
+  usart_puts_P(PSTR("m - Set PWM tuning voltage maximum\n"));     // TP7 + TP8
+  usart_puts_P(PSTR("n - Increase PWM tuning voltage by 1\n"));   // TP7 + TP8
+  usart_puts_P(PSTR("o - Decrease PWM tuning voltage by 1\n"));   // TP7 + TP8
+  usart_puts_P(PSTR("p - VCO sweep test\n"));                     // TP9 + TP10
+  usart_puts_P(PSTR("q - PLL test 1 - DATA signal 5Hz\n"));       // TP11 + TP12
+  usart_puts_P(PSTR("r - PLL test 2 - RF stage\n"));              // TP13
+  usart_puts_P(PSTR("s - PLL test 2 - IF stage\n"));              // TP14
+  usart_puts_P(PSTR("\nz - Power OFF\n"));
 
   sei();
 
@@ -257,7 +258,7 @@ void delay_ms(uint16_t ms) {
 
   // `global_delay' will be decreased in timer 0's ISR
   while (global_delay > 0) {
-    nop();
+    _NOP();
   }
 }
 
@@ -287,15 +288,15 @@ static void init_eeprom(void) {
  */
 static void print_menu(void) {
   print_div();
-  pc_puts_P(PSTR("p - Display programs\n"));
-  pc_puts_P(PSTR("a - Add program\n"));
-  pc_puts_P(PSTR("t - Tune program\n"));
-  pc_puts_P(PSTR("d - Delete program\n"));
-  pc_puts_P(PSTR("e - Delete all programs\n"));
-  pc_puts_P(PSTR("q - Quit menu\n"));
-  pc_puts_P(PSTR("o - Power off\n"));
+  usart_puts_P(PSTR("p - Display programs\n"));
+  usart_puts_P(PSTR("a - Add program\n"));
+  usart_puts_P(PSTR("t - Tune program\n"));
+  usart_puts_P(PSTR("d - Delete program\n"));
+  usart_puts_P(PSTR("e - Delete all programs\n"));
+  usart_puts_P(PSTR("q - Quit menu\n"));
+  usart_puts_P(PSTR("o - Power off\n"));
   print_div();
-  pc_puts_P(PSTR("=> "));
+  usart_puts_P(PSTR("=> "));
 }
 
 /*
@@ -307,39 +308,39 @@ static void print_menu(void) {
  *
  */
 static void print_program(jammer_setting *setting, uint8_t n, uint8_t m) {
-  pc_puts_P(PSTR("Program number "));
+  usart_puts_P(PSTR("Program number "));
   putnum_ud(n + 1);
-  pc_puts_P(PSTR(" of "));
+  usart_puts_P(PSTR(" of "));
   putnum_ud((uint16_t)m);
-  pc_putc('\n');
+  usart_putc('\n');
 
-  pc_puts_P(PSTR("Low band VCO: "));
+  usart_puts_P(PSTR("Low band VCO: "));
   if (setting->startfreq2 == 0) {
-    pc_puts_P(PSTR("Off"));
+    usart_puts_P(PSTR("Off"));
   } else {
     putnum_ud(setting->startfreq2);
-    pc_puts_P(PSTR(" -> "));
+    usart_puts_P(PSTR(" -> "));
     putnum_ud(setting->endfreq2);
-    pc_puts_P(PSTR(" ("));
+    usart_puts_P(PSTR(" ("));
     putnum_ud(setting->dc_offset2);
-    pc_puts_P(PSTR(", "));
+    usart_puts_P(PSTR(", "));
     putnum_ud(setting->bandwidth2);
-    pc_putc(')');
+    usart_putc(')');
   }
-  pc_puts_P(PSTR("\nHigh band VCO: "));
+  usart_puts_P(PSTR("\nHigh band VCO: "));
   if (setting->startfreq1 == 0) {
-    pc_puts_P(PSTR("Off"));
+    usart_puts_P(PSTR("Off"));
   } else {
     putnum_ud(setting->startfreq1);
-    pc_puts_P(PSTR(" -> "));
+    usart_puts_P(PSTR(" -> "));
     putnum_ud(setting->endfreq1);
-    pc_puts_P(PSTR(" ("));
+    usart_puts_P(PSTR(" ("));
     putnum_ud(setting->dc_offset1);
-    pc_puts_P(PSTR(", "));
+    usart_puts_P(PSTR(", "));
     putnum_ud(setting->bandwidth1);
-    pc_putc(')');
+    usart_putc(')');
   }
-  pc_puts_P(PSTR("\n\n"));
+  usart_puts_P(PSTR("\n\n"));
 }
 
 /*
@@ -356,9 +357,9 @@ static void display_programs(void) {
   }
 
   putnum_ud(progs);
-  pc_puts_P(PSTR(" of "));
+  usart_puts_P(PSTR(" of "));
   putnum_ud(MAX_PROGRAMS);
-  pc_puts_P(PSTR(" programs in memory.\n\n"));
+  usart_puts_P(PSTR(" programs in memory.\n\n"));
 
   for (i = 0; i < progs; ++i) {
     eeprom_read_block(&setting,
@@ -377,20 +378,20 @@ static void delete_program(void) {
   jammer_setting setting;
 
   if (eeprom_read_byte(&num_programs) == 0) {
-    pc_puts_P(PSTR("No programs stored.\n\n"));
+    usart_puts_P(PSTR("No programs stored.\n\n"));
     return;
   }
 
   display_programs();
-  pc_puts_P(PSTR("Delete program number: "));
-  n = pc_read16();
+  usart_puts_P(PSTR("Delete program number: "));
+  n = usart_get16();
   progs = eeprom_read_byte(&num_programs);
   if (progs > MAX_PROGRAMS) {
     progs = MAX_PROGRAMS;
   }
 
   if ((n == 0) || (n > progs)) {
-    pc_puts_P(PSTR("Invalid program number.\n\n"));
+    usart_puts_P(PSTR("Invalid program number.\n\n"));
     return;
   }
 
@@ -413,7 +414,7 @@ static void delete_program(void) {
       eeprom_write_byte(&num_programs, progs - 1);
     }
   }
-  pc_putc('\n');
+  usart_putc('\n');
 }
 
 /*
@@ -457,15 +458,15 @@ static void tune_program(void) {
   uint8_t n;
 
   if (eeprom_read_byte(&num_programs) == 0) {
-    pc_puts_P(PSTR("No programs stored.\n\n"));
+    usart_puts_P(PSTR("No programs stored.\n\n"));
     return;
   }
 
   display_programs();
-  pc_puts_P(PSTR("Tune program number: "));
-  n = pc_read16();
+  usart_puts_P(PSTR("Tune program number: "));
+  n = usart_get16();
   if (n > eeprom_read_byte(&num_programs)) {
-    pc_puts_P(PSTR("Invalid program number.\n\n"));
+    usart_puts_P(PSTR("Invalid program number.\n\n"));
   } else {
     tune_it(n - 1, 1);
   }
@@ -481,72 +482,72 @@ static void add_program(void) {
 
   progs = eeprom_read_byte(&num_programs);
   if (progs >= MAX_PROGRAMS) {
-    pc_puts_P(PSTR("Memory full.\n\n"));
+    usart_puts_P(PSTR("Memory full.\n\n"));
     return;
   }
 
-  pc_puts_P(PSTR("Enter start and stop frequency for each VCO or 0 to turn off VCO.\n"));
-  pc_puts_P(PSTR("Low Band: 345-1350MHz -- High Band 1225-2715MHz\n"));
+  usart_puts_P(PSTR("Enter start and stop frequency for each VCO or 0 to turn off VCO.\n"));
+  usart_puts_P(PSTR("Low Band: 345-1350MHz -- High Band 1225-2715MHz\n"));
 
 lowbandstart:
-  pc_puts_P(PSTR("\nLow band VCO\nStart (in MHz): "));
-  new_setting.startfreq2 = pc_read16();
+  usart_puts_P(PSTR("\nLow band VCO\nStart (in MHz): "));
+  new_setting.startfreq2 = usart_get16();
   if (new_setting.startfreq2 == 0) {
     new_setting.endfreq2 = 0;
     goto highbandstart;
   }
   if (new_setting.startfreq2 < LOWBAND_VCO_LOW) {
-    pc_puts_P(PSTR("Frequency too low.\n"));
+    usart_puts_P(PSTR("Frequency too low.\n"));
     goto lowbandstart;
   }
 
 lowbandend:
-  pc_puts_P(PSTR("End (in MHz): "));
-  new_setting.endfreq2 = pc_read16();
+  usart_puts_P(PSTR("End (in MHz): "));
+  new_setting.endfreq2 = usart_get16();
   if (new_setting.endfreq2 == 0) {
     new_setting.startfreq2 = 0;
     goto highbandstart;
   }
   if (new_setting.endfreq2 > LOWBAND_VCO_HIGH) {
-    pc_puts_P(PSTR("Frequency too high.\n"));
+    usart_puts_P(PSTR("Frequency too high.\n"));
     goto lowbandend;
   }
   if (new_setting.endfreq2 < new_setting.startfreq2) {
-    pc_puts_P(PSTR("End frequency lower than start.\n"));
+    usart_puts_P(PSTR("End frequency lower than start.\n"));
     goto lowbandend;
   }
 
 highbandstart:
-  pc_puts_P(PSTR("\nHigh band VCO\nStart (in MHz): "));
-  new_setting.startfreq1 = pc_read16();
+  usart_puts_P(PSTR("\nHigh band VCO\nStart (in MHz): "));
+  new_setting.startfreq1 = usart_get16();
   if (new_setting.startfreq1 == 0) {
     new_setting.endfreq1 = 0;
     goto saveprog;
   }
   if (new_setting.startfreq1 < HIGHBAND_VCO_LOW) {
-    pc_puts_P(PSTR("Frequency too low.\n"));
+    usart_puts_P(PSTR("Frequency too low.\n"));
     goto highbandstart;
   }
 
 highbandend:
-  pc_puts_P(PSTR("End (in MHz): "));
-  new_setting.endfreq1 = pc_read16();
+  usart_puts_P(PSTR("End (in MHz): "));
+  new_setting.endfreq1 = usart_get16();
   if (new_setting.endfreq1 == 0) {
     new_setting.startfreq1 = 0;
     goto saveprog;
   }
   if (new_setting.endfreq1 > HIGHBAND_VCO_HIGH) {
-    pc_puts_P(PSTR("Frequency too high.\n"));
+    usart_puts_P(PSTR("Frequency too high.\n"));
     goto highbandend;
   }
   if (new_setting.endfreq1 < new_setting.startfreq1) {
-    pc_puts_P(PSTR("End frequency lower than start.\n"));
+    usart_puts_P(PSTR("End frequency lower than start.\n"));
     goto highbandend;
   }
 
 saveprog:
   if ((new_setting.startfreq1 == 0) && (new_setting.startfreq2 == 0)) {
-    pc_puts_P(PSTR("\nNothing to save.\n\n"));
+    usart_puts_P(PSTR("\nNothing to save.\n\n"));
     return;
   }
   new_setting.dc_offset1 = new_setting.dc_offset2 = 0;
@@ -557,9 +558,9 @@ saveprog:
                      sizeof(jammer_setting));
 
   eeprom_write_byte(&num_programs, progs + 1);
-  pc_puts_P(PSTR("\nSaved program number "));
+  usart_puts_P(PSTR("\nSaved program number "));
   putnum_ud(progs + 1);
-  pc_puts_P(PSTR(".\n\n"));
+  usart_puts_P(PSTR(".\n\n"));
 }
 
 /*
@@ -571,9 +572,9 @@ static void run_menu(void) {
 
   do {
     print_menu();
-    c = pc_getc();
-    pc_putc(c);
-    pc_putc('\n');
+    c = usart_getc();
+    usart_putc(c);
+    usart_putc('\n');
     switch (c) {
       case 'p':
         display_programs();
@@ -588,10 +589,10 @@ static void run_menu(void) {
         delete_program();
         break;
       case 'e':
-        pc_puts_P(PSTR("Delete all programs? y/n: "));
-        c = pc_getc();
-        pc_putc(c);
-        pc_puts_P(PSTR("\n\n"));
+        usart_puts_P(PSTR("Delete all programs? y/n: "));
+        c = usart_getc();
+        usart_putc(c);
+        usart_puts_P(PSTR("\n\n"));
         if (c == 'y') {
           eeprom_write_word(&validity, 0x0000);
           init_eeprom();
@@ -603,7 +604,7 @@ static void run_menu(void) {
         power_off();
         break;
       default:
-        pc_puts_P(PSTR("Unknown command.\n\n"));
+        usart_puts_P(PSTR("Unknown command.\n\n"));
         break;
     }
   } while (c != 'q');
@@ -629,7 +630,7 @@ int main(void) {
   key_delay = 0;
   // Power key must be pressed at least 2 seconds to power ON
   while (key_delay < 2000) {
-    nop();
+    _NOP();
   }
 
   // Power ON switch pin output and force HIGH to keep device running
@@ -679,7 +680,7 @@ int main(void) {
   // Check EEPROM validity
   init_eeprom();
 
-  pc_puts_P(PSTR("Wave Bubble\nFW: " __DATE__ " / " __TIME__ "\n\n"));
+  usart_puts_P(PSTR("Wave Bubble\nFW: " __DATE__ " / " __TIME__ "\n\n"));
 
   uint8_t progs, program_num;
   jammer_setting setting;
@@ -690,13 +691,13 @@ int main(void) {
   }
 
   if (progs != 0) {
-    pc_puts_P(PSTR("Press key to enter menu...\n"));
+    usart_puts_P(PSTR("Press key to enter menu...\n"));
     delay_ms(2000);
   }
 
 no_progs: // Go here in case 'q' is pressed and no programs are stored
-  if ((UCSR0A & _BV(RXC0)) && isascii(pc_getc())) {
-    pc_putc('\n');
+  if ((UCSR0A & _BV(RXC0)) && isascii(usart_getc())) {
+    usart_putc('\n');
     run_menu();
   } else if (progs == 0) {
     run_menu();
@@ -705,12 +706,12 @@ no_progs: // Go here in case 'q' is pressed and no programs are stored
 run_prog: // Go here when program key is pressed, switch to next program
   progs = eeprom_read_byte(&num_programs);
   if (progs == 0) {
-    pc_puts_P(PSTR("No programs stored.\n\n"));
+    usart_puts_P(PSTR("No programs stored.\n\n"));
     goto no_progs;
   } else if (progs > MAX_PROGRAMS) {
     progs = MAX_PROGRAMS;
   } else if (progs != 0) {
-    pc_putc('\n');
+    usart_putc('\n');
     print_div();
   }
 
@@ -723,7 +724,7 @@ run_prog: // Go here when program key is pressed, switch to next program
                     &settings_ee + sizeof(jammer_setting) * program_num,
                     sizeof(jammer_setting));
 
-  pc_putc('\n');
+  usart_putc('\n');
   print_program(&setting, program_num, progs);
   print_div();
 
@@ -754,7 +755,7 @@ run_prog: // Go here when program key is pressed, switch to next program
     batt = ADC;
 #ifdef DEBUG
     putnum_ud(batt);
-    pc_putc('\n');
+    usart_putc('\n');
 #endif
 
     if (batt > LOWBATT_MINIMUM) {

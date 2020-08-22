@@ -44,8 +44,4 @@ extern void set_sawtooth_low(void);
 extern void set_sawtooth_high(void);
 extern void set_resistor(uint8_t rnum, uint8_t rval);
 
-/* clang-format off */
-#define nop() asm volatile ("nop")
-/* clang-format on */
-
 #endif

@@ -7,6 +7,8 @@
 
 #include "tuner.h"
 
+#include <avr/cpufunc.h>
+
 /*
  * Initialize variable DC generation via PWM from timer 1.
  *
@@ -58,7 +60,7 @@ void set_resistor(uint8_t rnum, uint8_t rval) {
   data = rnum & AD8402_ADDRESS_SIZE_MASK;
 #ifdef DEBUG
   if (data != AD8402_RDAC1_ADDRESS || data != AD8402_RDAC2_ADDRESS) {
-    pc_puts_P(PSTR("Only 2 variable resistors on AD8402."));
+    usart_puts_P(PSTR("Only 2 variable resistors on AD8402."));
     return;
   }
 #endif
@@ -68,7 +70,7 @@ void set_resistor(uint8_t rnum, uint8_t rval) {
   // CS low
   // t_CSS: CS Setup Time -- 10ns minimum
   SPICS_PORT &= ~_BV(SPICS);
-  nop();
+  _NOP();
 
   for (reg_mask = AD8402_MSB_MASK; reg_mask != 0; reg_mask >>= 1) {
     // Set DATA high or low depending on masked value
@@ -85,7 +87,7 @@ void set_resistor(uint8_t rnum, uint8_t rval) {
     // t_CH: Input Clock Pulse Width -- 10ns minimum
     // t_DH: Data Hold Time -- 5ns minimum
     // Set CLK low to clock in the next DATA bit
-    nop();
+    _NOP();
     SPICLK_PORT &= ~_BV(SPICLK);
 
     // t_CL: CLK Pulse Width Low -- 10ns minimum
@@ -94,7 +96,7 @@ void set_resistor(uint8_t rnum, uint8_t rval) {
   // t_CSH: CLK Fall to CS Rise Hold Time -- 0ns minimum
   // t_CS1: CS Rise to CLK Rise Setup -- 10ns minimum
   // Pull CS line high to load the DAC register
-  nop();
+  _NOP();
   SPICS_PORT |= _BV(SPICS);
 
   // t_CSW: CS High Pulse Width -- 10ns minimum

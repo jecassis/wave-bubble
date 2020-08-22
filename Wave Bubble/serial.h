@@ -10,19 +10,20 @@
 
 #include <avr/io.h>
 
-#define BAUDRATE 19200 // Serial baud rate for terminal communication
-
-#if !defined(F_CPU)
-#error "No MCU crystal speed defined!"
-#endif
+#define BAUD 19200 // Serial baud rate for terminal communication
 
 extern void usart_init(void);
-extern void pc_putc(char data);
-extern void pc_puts(char *s);
-extern void pc_puts_P(const char *s);
-extern char pc_getc(void);
-extern uint16_t pc_read16(void);
+extern void usart_putc(char data);
+extern void usart_puts_P(const char *s);
+#ifdef DEBUG
+extern void usart_puts(char *s);
+extern void usart_flush(char *s);
+#endif
+extern char usart_getc(void);
+extern uint16_t usart_get16(void);
+#ifdef DEBUG
 extern void putnum_uh(uint16_t n);
+#endif
 extern void putnum_ud(uint16_t n);
 extern void print_div(void);
 
